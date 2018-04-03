@@ -1,0 +1,929 @@
+/*
+	Title: DV Calculator
+	Description: A tool to help with finding the DVs of Pokemon in generation 1 and 2 games.
+    Copyright (C) 2018  Andrew Noble
+
+    This program is free software: you can redistribute it and/or modify
+    it under the terms of the GNU General Public License as published by
+    the Free Software Foundation, either version 3 of the License, or
+    (at your option) any later version.
+
+    This program is distributed in the hope that it will be useful,
+    but WITHOUT ANY WARRANTY; without even the implied warranty of
+    MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+    GNU General Public License for more details.
+*/
+
+* 
+{
+	border: 0;
+	border-color: #839172;
+	border-collapse: collapse;
+	border-style: solid;
+	color: #444444;
+	font-family: "Palatino Linotype", "Book Antiqua", "Palatino", "Serif";
+	font-size: 100%;
+	margin: 0;
+	padding: 0;
+	text-align: center;
+	vertical-align: top;
+}
+
+input
+{
+	background-color: #fff;	
+}
+
+body 
+{
+	background-color: #FBFFF7;
+	font-size: 18px;
+	line-height: 1.25em;
+}
+
+div.column
+{
+	background-color: #FCFCF0;
+	display: inline-block;
+	margin: 10px 5px 0;
+	box-shadow: 1px 1px 3px black;
+}
+
+div.column > h4:first-child span
+{
+	display: inline-block;
+	float: left;
+	font-size: 0.7em;
+	padding: 2px 7px 0;
+	font-weight: normal;
+	font-variant: small-caps;
+}
+
+h3 
+{
+	display: inline-block;
+	font-size: 1.3em;
+	padding: 9px 1px 0;
+	text-align: center;
+}
+
+h3.boxArt
+{
+	background-repeat: no-repeat;
+	background-position: 15px 0;
+	min-width: 55px;
+	height: 31px;/*should be size of image minus top padding*/
+	text-shadow: 1px 1px 2px black;
+	font-weight: bold;
+	font-variant: small-caps;
+}
+
+h4  
+{
+	background-color: #eaf2ce;
+	font-size: 1.1em;
+	margin: 0 0 5px;
+	padding: 1px 8px 3px;
+	text-align: right;
+	border-width: 0 0 1px;
+}
+
+h5
+{
+	border-style: dotted;
+}
+
+hr
+{
+	background-color: #000000;
+	height: 1px;
+	margin: 0 0 10px;
+}
+
+img.types
+{
+	margin: 1px 3px 0;
+}
+
+input
+{
+	border-style: dotted;
+	padding: 1px 8px 5px;
+}
+
+input.button
+{
+	background-color: #ebebeb;
+	border-width: 0;
+	padding: 1px 3px;
+}
+
+input.button:hover
+{
+	background-color: #F3F3F3;
+}
+
+label
+{
+	font-style: italic;
+	margin: 0 3px;
+}
+
+label[for="TRACK"]
+{
+	font-variant: small-caps;
+	position: relative;
+	top: 10px;
+}
+
+select
+{
+	border-width: 0;
+	margin: 3px 0 0 5px;
+	padding: 2px 5px;
+}
+
+td
+{
+	padding: 4px;
+}
+
+tr.heading td:hover
+{
+	background-color: #F3F3F3;
+}
+
+ul
+{
+	list-style-position: inside;
+}
+
+ol
+{
+	list-style-position: inside;
+	padding: 0 0 0 15px;
+}
+
+li
+{
+	margin-left: 17px;
+	text-indent: -17px;
+}
+
+#BASE
+{
+	float: right;
+	position: relative;
+	top: -3px;
+}
+
+.blue
+{
+ color: #00A0DB;
+}
+
+#BLUE
+{
+	/*color: #00A0DB;*/
+	background-image: url("blue.png");
+	opacity: 25%;
+}
+
+#CONTAINER
+{
+	display: inline-block;
+	margin: 0 auto;
+	padding: 0 0 3px;
+}
+
+#CURRENT
+{
+	background-image: url('current.png');
+	background-repeat: no-repeat;
+	margin: 0 2px 0 0;
+	padding: 1px;
+}
+
+#LOOKUP
+{
+	margin: 5px 0 0;
+	width: 100%;
+	border-width: 1px 0 0;
+}
+
+#LOOKUP td
+{
+	width: 15%;
+}
+
+#LOOKUP td.index
+{
+	font-weight: bold;
+	font-variant: small-caps;
+	text-transform: lowercase;
+	
+}
+
+#DV tr:first-child td
+{
+	border-width: 0 0 1px 0;
+}
+
+#EVOLVE
+{
+	margin: 3px 7px 0 0;
+}
+
+sup
+{
+	position: relative;
+	top: -0.2em;
+	font-size: 0.7em;
+}
+
+#POKEMON tr:first-child td button, #POKEMON tr:first-child td input
+{
+	float: left;
+}
+
+#POKEMON tr:first-child td button
+{
+	margin: 0 0 0 5px;
+}
+
+#POKEMON tr:first-child td label
+{
+	float: left;
+	font-variant: small-caps;
+	font-size: 0.9em;
+	margin-right: 10px;
+}
+
+#POKEMON tr:first-child td label:first-of-type
+{
+	font-variant: normal;
+}
+
+#POKEMON tr:first-child td img
+{
+	float: right;
+}
+
+#REVERT
+{
+	background-image: url('assets/evolve_down.png');
+	margin: 3px 2px 0 0;
+}
+
+#GUIDE
+{
+	display: block;
+	font-size: 12pt;
+	margin: 15px auto;
+	width: 65%;
+}
+
+#GUIDE p
+{
+	margin: 5px 0 2px 17px;
+	padding: 0 5px;
+	text-align: left;
+}
+
+#GUIDE li
+{
+	padding: 0 5px;
+	text-align: left;
+}
+
+#HEADER
+{
+	margin: 15px 0 5px;
+}
+
+#HEADER input
+{
+	background-color: #ebebeb;
+	padding: 0 3px 3px;
+	font-variant: small-caps;
+	margin: 3px;
+}
+
+#DUMMY
+{
+	visibility: hidden;
+}
+
+#MAP
+{	
+	position: relative;
+	width: 100%;
+	box-sizing: border-box;
+	box-shadow: #b1b1b1 2px 2px 5px;
+}
+
+#MAX_EXP
+{
+	border-width: 0 0 1px;
+}
+
+#MAX_EXP
+{
+	position: relative;
+	top: 14px;
+	left: 4px;
+}
+
+label[for='MAX_EXP']
+{
+	font-variant: small-caps;
+	margin: 11px 0 0 15px;
+	display: inline-block;
+}
+
+#MINUS
+{
+	float: left;
+}
+
+#MINUS, #PLUS
+{
+	opacity: 0.5;
+	margin: 8px 0 0;
+}
+
+#PLUS
+{
+	float: right;
+}
+
+.avatar
+{
+	height: 125%;
+	position: relative;
+	top: -5px;
+	
+}
+
+#CONFIRM_LABEL
+{
+	display: inline-block;
+	margin-top: -5px;
+}
+
+#POKEDEX
+{
+	float: left;
+	display: inline-block;
+	position: relative;
+	left: -50px;
+	top: 11px;
+	font-size: 1.3em;
+}
+
+#PARTY 
+{
+	position: relative;
+	border-width: 1px 0 0;
+}
+#PARTY input
+{
+	float: right;
+}
+
+#PARTY td
+{
+	padding: 2px 3px 4px;
+}
+
+#PARTY div.index
+{
+	float: left;
+}
+
+#PARTY img
+{
+	margin: 3px 3px 0;
+	float: left;
+}
+
+#PARTY sup
+{
+	margin: 3px 0 0;
+}
+
+#POKEMON
+{
+	width: 100%;
+	padding: 0 5px;
+}
+
+#POKEMON td
+{
+	padding: 0 1px;
+}
+
+#SELECT img
+{
+	margin-top: 8px;
+}
+
+#SHINY
+{
+	margin: 0 5px 0 0;
+}
+
+/*reset prompt*/
+#PROMPT
+{
+	display: inline-block;
+	float: right;
+	font-variant: small-caps;
+	margin: 9px 3px 0;
+}
+
+#PROMPT input
+{
+	margin: 2px 8px 0 7px;
+}
+
+/*overwrite prompt*/
+#OVERWRITE
+{
+	margin: 8px 0 0 7px;
+}
+
+#ERROR
+{
+	/*background: -webkit-linear-gradient(red, yellow);  For Safari 5.1 to 6.0
+    background: -o-linear-gradient(red, yellow);  For Opera 11.1 to 12.0 
+    background: -moz-linear-gradient(red, yellow);  For Firefox 3.6 to 15 */
+	background: linear-gradient(90deg, #d41717 -50%, #FCFCF0 20%, #FCFCF0 80%, #d41717 150%);
+	border-radius: 2px;
+	font-variant: small-caps;
+	font-size: 1.2em;
+	padding: 4px;
+	width: 85%;
+	margin: 0 auto;
+}
+
+#OPTIONS
+{
+	width: 193px;
+}
+
+#OPTIONS input
+{
+	margin: 10px 0 0;
+}
+
+#RARITY
+{
+	border-style: dotted;
+	border-width: 1px 0 0;
+}
+
+#RECORDS
+{
+	border-width: 1px 0 0;
+}
+
+.red 
+{
+	color: #EF4934;
+	text-shadow: 1px 1px 1px black;
+}
+
+#RED
+{
+	background-image: url("red.png");
+	text-align: bottom;
+}
+
+#HEADER input[type='submit']:hover
+{
+	background-color: #d41717;
+	color: white;
+}
+
+#HEADER input.floatRight:hover
+{
+	background-color: #d41717;
+	color: white;
+}
+
+#SAVE
+{
+	background-image: url("save.png");
+	background-repeat: no-repeat;
+	background-position: 92% 50%;
+	padding-right: 30px;
+	float: right;
+}
+
+#STATS
+{
+	padding: 0 0;
+	width: 100%;
+	border-width: 0;
+}
+
+#ZONE input
+{
+	/*float: right;*/
+	margin: 0 8px 0 0;
+	padding: 0 7px 3px;
+	background-color: #f7f7f7;
+	font-variant: small-caps;
+	border-width: 1px;
+	border-style: solid;
+	border-radius: 1px;
+	
+}
+
+#TRACKER_CONTROLS 
+{
+	width: 100%;
+	
+}
+
+#TRACKER_CONTROLS > input:first-of-type
+{
+	margin: 4px;
+}
+
+input.button 
+{
+	padding: 0 6px 2px;
+	font-size: 1.2em;
+	font-variant: small-caps;
+	box-shadow: inset black -1px -1px 2px;
+}
+
+td.controls
+{
+	border-width: 1px 0 0;
+	border-style: solid;
+}
+
+td.controls input.button
+{
+	margin: 1px 2px 0px;
+	padding: 4px 8px 6px;
+	float: left;
+	border-radius: 1px;
+}
+
+#SAVE_ID
+{
+	width: 140px;
+	border-width: 1px;
+	padding: 5px 0;
+	margin: 4px 0 0;
+}
+
+.framed
+{
+	box-shadow: #839172 0 0 3px;
+	border-width: 1px;
+	border-radius: 8px;
+	display: inline-block;
+	overflow: hidden;
+}
+
+#CONTROLS
+{
+	border-width: 1px 0 0;
+}
+
+#STATS_HEADINGS
+{
+	border-width: 0 !important;
+}
+
+#STATS_HEADINGS td
+{
+	border-width: 0 !important;
+}
+
+#STAT_INPUT
+{
+	border-width: 0 !important;
+}
+
+#STAT_INPUT input
+{
+	margin: 0 0 1px;
+	padding: 2px 1px 2px 4px;
+	box-shadow: 0 1px 2px black;
+	width: 45px;
+}
+
+#TRACKER input[type='number']
+{
+	box-shadow: 0 1px 2px black;
+	text-align: left;
+	padding: 0 0 0 5px;
+}
+
+#ERROR_CONTAINER input[type='checkbox']
+{
+	margin: 8px 0 0 7px;
+}
+
+input[type='checkbox']
+{
+	transform: scale(1.2);
+}
+
+#POKEMON_CONTROLS button
+{
+	margin: 12px 3px 0 7px;
+	transform: scale(1.15);
+}
+
+#POKEMON_CONTROLS button:first-of-type
+{
+	margin-top: 10px;
+}
+
+#TRACK
+{
+	margin: 16px 3px 0 0;
+}
+
+
+#TRACK label
+{
+	padding: 5px 0 0;
+
+}
+
+#TRACKER img
+{
+	position: relative;
+	top: -2px;
+	left: -1px;
+}
+
+#TRACKER img.types 
+{
+	float: left;
+}
+
+#TRACKER
+{
+	border-width: 1px 0 0;
+	margin: 3px 0 0;
+	width: 100%;
+}
+
+#TRACKER input
+{
+	margin: 1px 2px;
+	padding: 0 2px 0 0;
+	width: 50px;
+}
+
+#TRACKER tr td:first-child
+{
+	padding: 4px;
+	text-align: left;
+}
+
+#VITAMIN_LABELS span
+{
+	font-size: 1.1em;
+	font-variant: small-caps;
+	display: inline-block;
+	margin: 0 2.5%;
+}
+
+#VETERAN
+{
+	border-width: 1px 0 0;
+	padding: 5px 0 2px;
+	width: 100%;
+}
+
+#ZONE h3
+{
+	margin: 2px 0 10px;
+}
+	
+#VETERAN input
+{
+	width: 50px;
+	margin: 0 2%;
+}
+
+.yellow
+{
+	color: #F3ED7B;
+	text-shadow: 1px 1px 2px black;
+}
+
+#YELLOW
+{
+	position: relative;
+	left: -1px;
+	color: #F3ED7B;
+	background-image: url("yellow.png");
+}
+
+#CRYSTAL
+{
+	color: #fcf3f6;
+	background-image: url("crystal.png");
+}
+
+#SILVER
+{
+	color: #a3cbe5;
+	background-image: url("silver.png");
+}
+
+
+#GOLD
+{
+	color: #b6a672;
+	background-image: url("gold.png");
+}
+
+#ZONE
+{
+	position: relative;
+	text-align: center;
+	width: 100%;
+}
+
+button
+{
+	background-color: transparent;
+	margin: 0 3px;
+	float: left;
+	font-variant: small-caps;
+}
+
+button label
+{
+	position: relative;
+	top: -4px;
+}
+
+.base {
+	display:inline-block;
+	margin: 0 5px;
+}
+
+.flipVertical {
+	-webkit-transform: scaleY(-1);
+    transform: scaleY(-1);
+}
+
+.bottomborder
+{
+	border-width: 0 0 1px;
+}
+
+.floatRight 
+{
+	float: right;
+}
+
+.floatLeft
+{
+	display: inline-block;
+	float: left;
+}
+
+.gray
+{
+	color: #666666;
+}
+
+tr.record:last-of-type
+{
+	border-width: 0 0 0;
+}
+
+.highlighted
+{
+	font-size: 0.9em;
+	background-color: #e0f4ff;
+}
+
+
+#MAP_CONTAINER
+{
+	position: relative;
+	box-sizing: content-box;
+	width: 66%;
+	margin: 3px auto 4px;
+}
+
+.mapCaption
+{
+	float: left;
+	position: absolute;
+	left: 0;
+	bottom: 10px;
+	width: 200px;
+	background-color: #ebebeb;
+	box-shadow: inset black -2px -2px 8px;
+	padding: 3px;
+	z-index: 2;
+}
+
+.clickarea
+{
+	width: 12.5%;
+	height: 12.5%;
+	display: inline-block;
+	z-index: 1;
+}
+
+
+.clickarea:hover
+{
+	visibility: visible;
+	background-size: contain;
+	background-repeat: no-repeat;
+	background-image: url('maps/player_target.png');
+
+}
+
+.index 
+{
+	font-variant: small-caps;
+}
+
+.bold
+{
+	font-weight: bold;
+}
+
+.italic
+{
+	font-style: italic;
+}
+
+.saved
+{
+	background-color: #DDEAF0;
+	font-style: italic;
+}
+
+.small 
+{
+	font-size: 12pt;
+}
+
+.smallButton
+{
+	font-size: 0.6em;
+	padding: 3px;
+	border-width: 0;
+	outline: 1px solid black;
+}
+
+.smallButton:hover
+{
+	background-color: #F3F3F3;
+}
+
+.right
+{
+	text-align: right;
+}
+
+.shaded
+{
+	background-color: #c2c2c2;
+}
+
+.shadedLight
+{
+	background-color: #eaf2ce;	
+}
+
+.thumb
+{
+	float: left;
+	margin: -4px 0;
+}
+
+.title td 
+{
+	font-variant: small-caps;
+}
+
+.title 
+{
+	font-weight: bold;
+}
+
+.underline
+{
+	text-decoration: underline;
+}
