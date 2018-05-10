@@ -1,7 +1,6 @@
-/*
-	Title: DV Calculator
-	Description: A tool to help with finding the DVs of Pokemon in generation 1 and 2 games.
-    Copyright (C) 2018  Andrew Noble
+/*  Title: DV Calculator
+	Description: A web browser application for calculating diversification values in generation 1 and 2 Pokemon games.
+    Copyright (C) 2018 Andrew Noble
 
     This program is free software: you can redistribute it and/or modify
     it under the terms of the GNU General Public License as published by
@@ -11,62 +10,94 @@
     This program is distributed in the hope that it will be useful,
     but WITHOUT ANY WARRANTY; without even the implied warranty of
     MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
-    GNU General Public License for more details.
-*/
+    GNU General Public License for more details. */
 
+//globals
+var data;
+var globals;
 var storage;
 var tables;
-var globals;
-var config;
 
-function levelupfa()
+// Return reference to DOM element given by @id
+function $(id)
+{
+	return document.getElementById(id);
+}
+
+// Return true if variable @a is set (not null or undefined)
+function isset(a)
+{
+	return (typeof a !== 'undefined' && a != null);
+}
+
+// Return a new Array of length @size filled with default value given by @initial
+function createArray(size, initial)
+{
+	var array = [];
+	
+	while(array.length < size)
+		array.push(initial);
+	
+	return array;
+}
+
+// Level up the current Pokemon by 1 level.
+function levelUp()
 {
 	storage.levelup = true;
-	savefa();
+	saveAll();
 }
 
-function evolvefa()
+// Evolve the current Pokemon.
+function evolvePokemon()
 {
 	storage.evolve = true;
-	savefa();
+	saveAll();
 }
 
-function devolvefa()
+// Devolve the current Pokemon.
+function devolvePokemon()
 {
 	storage.revert = true;
-	savefa();
+	saveAll();
 }
 
+// Set the experience tracker column by which to sort its entries.
 function sortBy(column)
 {
 	if(column == storage.global.sortby)
 		storage.global.sortorder *= -1;
 	else
-		storage.global.sortorder = 1;//reset
+		storage.global.sortorder = 1;
 	
 	storage.global.sortby = column;
 	refresh();
 }
 
+// Refresh the application.
 function refresh()
 {
 	localStorage.setItem('storage', JSON.stringify(storage));
 	location.reload();
 }
 
+// Change the generation mode of the calculator.
 function changeGen()
 {
 	var gen = 1;
+	
 	if(storage.gen == 1)
 		gen = 2;
 
 	localStorage.setItem('gen', String(gen));
-	resetfa();
+	resetCalc();
 }
 
-function resetfa()
+// Reset and reinitialize the application.
+function resetCalc()
 {
 	getFormInput();
+	
 	if(storage.input.confirm == true)
 	{
 		var gen = localStorage.getItem('gen');
@@ -85,16 +116,19 @@ function resetfa()
 			span.appendChild(text);
 			$('PROMPT').insertBefore(span, $('CONFIRM_RESET'));
 		}
+		
 		storage.confirmLabel = true;
 	}
 }
 
+// Change the current zone to that selected.
 function changeZone()
 {
-	storage.zone = $('ZONE_SELECT').value;//hack
-	savefa();
+	storage.zone = $('ZONE_SELECT').value;
+	saveAll();
 }
 
+// Service function used for sorting experience tracker entries by KO.
 function orderByKO(a, b)
 {
 	var compare = 0;
@@ -113,6 +147,7 @@ function orderByKO(a, b)
 	return compare * storage.global.sortorder;
 }
 
+// Service function used for sorting experience tracker entries by column.
 function orderByColumn(a, b)
 {
 	var compare = 0;
@@ -126,6 +161,7 @@ function orderByColumn(a, b)
 		{
 			pokeA = parseInt(pokeA);
 			pokeB = parseInt(pokeB);
+			
 			if(pokeA < pokeB)
 				compare = -1;
 			else if(pokeA > pokeB)
@@ -140,6 +176,8 @@ function orderByColumn(a, b)
 	return compare * storage.global.sortorder;
 }
 
+/* Populate the experience tracker with all Pokemon found in the current zone,
+   sorting by column or KO. */
 function populateTracker(id)
 {
 	var count = 0;
@@ -163,23 +201,15 @@ function populateTracker(id)
 	storage.in_zone = in_zone;
 }
 
-function $(id)
-{
-	return document.getElementById(id);
-}
-
+// Set experience tracker to veteran mode.
 function veteranMode()
 {
 	storage.veteran = (!storage.veteran) ? true : false;
-	savefa();
+	saveAll();
 }
 
-function trackCurrent()
-{
-	storage.track = (!storage.track) ? true : false;
-	savefa();
-}
-
+/* Dump all form fields into a local storage object for later processing in pollInput.
+   Takes the place of the POST variable from previous PHP version. */
 function getFormInput()
 {
 	storage.input = new Object();
@@ -197,23 +227,24 @@ function getFormInput()
 	}
 }
 
-function savefa() 
+// Save all user data.
+function saveAll() 
 {
 	getFormInput();
 	storage.input.save = true;
 	refresh();
 }
 
+// Change current Pokemon to that selected in the form.
 function changePokemon() 
 {
 	getFormInput();
-	var e = $('POKEMON_SELECT');
-	var newID = e.options[e.selectedIndex].value;
 	localStorage.setItem('storage', JSON.stringify(storage));
 	location.reload();
 }
 
-function calculatefa()
+// Perform main calculation routine.
+function calculateDV()
 {
 	getFormInput();
 	storage.input.calculate = true;
@@ -221,10 +252,8 @@ function calculatefa()
 	location.reload();
 }
 
-/*
-* Calculate the DV for a Pokemon's HP stat.
-* level must be greater than 0 or a divide by 0 error will be thrown
-*/
+/* Calculate the DV for a Pokemon's HP stat.
+   Level must be greater than 0 or a divide by 0 error will be thrown. */
 function calculateHitpointsDV(level, base, stat, exp)
 {
 	level = parseInt(level);
@@ -234,10 +263,9 @@ function calculateHitpointsDV(level, base, stat, exp)
 	return Math.ceil(((100 * (stat - level - 10)) / level - (2 * base) - calculatePoints(exp)) / 2);
 }
 
-/*
-* Calculate the range of possible HP dvalues that are determined by a Pokémon's current DV.
-* Returns an array with structure [min, max].
-*/
+/* Calculate the range of HP DVs that give an equal HP value
+   to that given by the Pokemon's current HP DV.
+   Returns an array with structure [min, max]. */
 function calculateHitpointsRange(base, dv, exp)
 {
 	var statRange = new Array();
@@ -262,9 +290,7 @@ function calculateHitpointsRange(base, dv, exp)
 	return statRange;
 }
 
-/*
-* Calculate the DV for any of four (Att, Def, Spd, Spc) of a Pokémon's stats.
-*/
+// Calculate the DV for any of the main four stats (Att, Def, Spd, Spc).
 function calculateStatDV(level, base, stat, exp)
 {
 	level = parseInt(level);
@@ -274,21 +300,23 @@ function calculateStatDV(level, base, stat, exp)
 	return Math.ceil((100 * (stat - 5)) / (level * 2) - base - (calculatePoints(exp) / 2));
 }
 
-/*
-* Calculate the range of possible stat dvalues that are determined by a Pokémon's current DV.
-* Returns an array with structure [min, max].
-*/
+/* Calculate the range of stat DVs that give an equal stat value
+   to that given by the Pokemon's current DV.
+   Returns an array with structure [min, max]. */
 function calculateStatRange(base, dv, exp)
 {
 	var statRange = new Array();
 	var stat = calculateStat(storage.stats.lvl, base, dv, exp);
 	var value = dv;
+	
 	while(calculateStat(storage.stats.lvl, base, value, exp) == stat)
 	{
 		value++;
 	}
+	
 	var highest = value - 1;
-	value = dv;//reset
+	value = dv;
+	
 	while(calculateStat(storage.stats.lvl, base, value, exp) == stat)
 	{
 		value--;
@@ -296,13 +324,11 @@ function calculateStatRange(base, dv, exp)
 	
 	statRange[0] = value + 1;
 	statRange[1] = highest;
+	
 	return statRange;
 }
 
-/*
-* Service method for other calculation methods.
-* Load on server demands this runs fast.
-*/
+// Calculate experience points for a stat based on corresponding experience value @exp.
 function calculatePoints(exp)
 {
 	exp = parseInt(exp);
@@ -310,10 +336,8 @@ function calculatePoints(exp)
 	return Math.floor(Math.min(255, r) / 4);		
 }
 
-/*
-* Calculate a Pokémon's hitpoints (HP).
-* This calculation differs from that used for the other 4 stats.
-*/
+/* Calculate a Pokemon's hitpoints value.
+   This calculation differs from that used for the other 4 stats. */
 function calculateHitpoints(level, base, dv, exp)
 {
 	level = parseInt(level);
@@ -323,55 +347,30 @@ function calculateHitpoints(level, base, dv, exp)
 	return Math.floor((2 * (base + dv) + calculatePoints(exp)) * (level / 100) + level + 10);
 }
 
-/*
-* Calculate a Pokémon's stat (any of Att, Def, Spd, Spc).
-*/
+// Calculate a Pokemon's stat value.
 function calculateStat(level, base, dv, exp)
 {
 	level = parseInt(level);
 	base = parseInt(base);
 	dv = parseInt(dv);
 	exp = parseInt(exp);
-
-	var result = Math.floor((2 * (base + dv) + calculatePoints(exp)) * (level / 100) + 5);
-	return result;
+	return Math.floor((2 * (base + dv) + calculatePoints(exp)) * (level / 100) + 5);
 }
 
-function format(t)
-{
-	var temp = "\n";
-	for(i = 0; i < t; i++)
-	{
-		temp = temp + "\t";
-	}
-	return temp;
-}
-
-function padStart(a, n, p)
-{
-	var s = '';
-	
-	for(i = 0; i < n; i++)
-	{
-		s += p;
-	}
-	
-	return s + a;
-}
-
-/*
-* Finds the hidden power of a pokemon in gen 2.
-*/
+// Find the hidden power of a Pokemon in generation 2.
 function calculateHiddenPower()
 {
-	var basedmg;
 	var binary = "";
+	var types = ['Fighting', 'Flying', 'Poison', 'Ground', 'Rock', 'Bug', 'Ghost', 'Steel'
+		, 'Fire', 'Water', 'Grass', 'Electric', 'Psychic', 'Ice', 'Dragon', 'Dark'];
 	
-	for(i = 1; i < countfa(storage.mode); i++)
+	storage.hiddenpower = new Object();
+	
+	for(i = 1; i < getLength(storage.mode); i++)
 	{
 		if(i != 3 && i != 4)
 		{
-			if(storage.mode[i] <= 7)//att is at index 1
+			if(storage.mode[i] <= 7)
 			{
 				binary = binary + "0";
 			}
@@ -382,7 +381,7 @@ function calculateHiddenPower()
 		}
 	}
 	
-	if(storage.mode[3] <= 7)//att is at index 1
+	if(storage.mode[3] <= 7)
 	{
 		binary = binary + "0";
 	}
@@ -391,78 +390,20 @@ function calculateHiddenPower()
 		binary = binary + "1";
 	}
 	
-	var decimal = parseInt(binary, 2);
-	var x = decimal;
+	var x = parseInt(binary, 2);
 	var y = Math.min(storage.mode[4], 3);//special DV capped at 3
-	basedmg = (5 * x + y) / 2 + 31;
-	var basetype;
+	var basedmg = (5 * x + y) / 2 + 31;
 	var a = (+storage.mode[1]).toString(2);
 	var b = (+storage.mode[1]).toString(2);
 	var typebin = a[2] + a[3] + b[2] + b[3];
 	var typedec = parseInt(typebin, 2);
-	var type;
-	
-	switch(typedec)
-	{
-		case 0:
-			type = 'Fighting';
-		break;
-		case 1:
-			type = 'Flying';
-		break;
-		case 2:
-			type = 'Poison';
-		break;
-		case 3:
-			type = 'Ground';
-		break;
-		case 4:
-			type = 'Rock';
-		break;
-		case 5:
-			type = 'Bug';
-		break;
-		case 6:
-			type = 'Ghost';
-		break;
-		case 7:
-			type = 'Steel';
-		break;
-		case 8:
-			type = 'Fire';
-		break;
-		case 9:
-			type = 'Water';
-		break;
-		case 10:
-			type = 'Grass';
-		break;
-		case 11:
-			type = 'Electric';
-		break;
-		case 12:
-			type = 'Psychic';
-		break;
-		case 13:
-			type = 'Ice';
-		break;	
-		case 14:
-			type = 'Dragon';
-		break;	
-		case 15:
-			type = 'Dark';
-		break;				
-	}
-	
-	storage.hiddenpower = new Object();
+
 	storage.hiddenpower.damage = Math.floor(basedmg);
-	storage.hiddenpower.type = type;
+	storage.hiddenpower.type = types[typedec];
 }
 
-/*
-* Initialize the calculator.
-* Globals must be set before calling this.
-*/
+/* Initialize the calculator.
+   Globals must be set before calling this. */
 function initialize(gen)
 {
 
@@ -524,20 +465,10 @@ function initialize(gen)
 	localStorage.setItem('storage', JSON.stringify(storage));
 }
 
-function createArray(size, initial)
-{
-	var array = [];
-	while(array.length < size)
-		array.push(initial);
-	return array;
-}
-
-/*
-* Re-initialize the session for a new Pokemon but keep other form-related variables unchanged.
-*/
+// Reinitialize the form for a new Pokemon without resetting calculator.
 function clear()
 {
-	storage.input = [];//clear all POST data, to ensure pollInput on next page refresh doesn't pick up old data
+	storage.input = [];//clear all previous input to ensure next call to pollInput doesn't pick up old data
 	storage.stats = new Object();
 	storage.stats.lvl = 0;
 	storage.stats.hp = 0;
@@ -602,12 +533,14 @@ function clear()
 		storage.shiny = storage.savedpokemon[saveid].shiny;
 		storage.hiddenpower = storage.savedpokemon[saveid].hidden;
 		storage.modecalculated = storage.savedpokemon[saveid].modecalculated;
+		
 		if(storage.modecalculated)
 		{
 			storage.display.max = true;
 			storage.display.mode_dv = true; 
 			storage.display.dv = true; 
 		}
+		
 		storage.display.stat_exp = true; 
 	}	
 	
@@ -618,64 +551,25 @@ function clear()
 	}
 }
 
-/*
-* Implements a comparison function used for sorting by KO: cmp_a ASC, cmp_D DESC
-*/
-function cmp_a(a, b)
-{
-	return a[0] > b[0];
-}
-
-function cmp_d(a, b)
-{
-	return a[0] < b[0];
-}
-
-/*
-* SQL queries require single quotes to be escaped and Farfetch'd will throw
-* errors if selected as the current Pokemon. Returns a string with the first
-* single quote escaped.
-*/
-function fixQuotes(name)
-{
-	var fixed = name;
-	var index = indexOf(name, "'");
-	
-	if(index)
-	{
-		fixed = name.substr(0 , index);
-		fixed = fixed + "'" + name.substr(index, name.length - index);
-	}
-	
-	return fixed;
-}
-
+// Return true if Pokemon given by @id exists in saved storage
 function isSaved(id)
 {
-	var saved = storage.savedpokemon;
 	var keys = Object.keys(storage.savedpokemon);
+	var saved = false;
 	
-	var bool = false;
 	for(i = 0; i < keys.length; i++)
 	{
 		if(keys[i] == id)
 		{
-			bool = true;
+			saved = true;
 			break;
 		}
 	}
 
-	return bool;
+	return saved;
 }	
 
-function isset(a)
-{
-	return (typeof a !== 'undefined' && a != null);
-}
-
-/*
-* Get all form fields in POST and store valid results in storage.
-*/
+// Poll HTML form and store valid input in local storage
 function pollInput()
 {
 	storage = JSON.parse(localStorage.getItem('storage'));
@@ -811,8 +705,8 @@ function pollInput()
 	}
 }
 
-
-function countfa(countable)
+// Return the length of an Array or Object
+function getLength(countable)
 {
 	var length = 0;
 	
@@ -828,39 +722,34 @@ function countfa(countable)
 	return length;
 }
 
-
+// Calculate the maximum possible stats for the current Pokemon 
 function calculateMaxStats()
 {
 	if(storage.modecalculated)
 	{
 		var level = 100;
 		var keys = Object.keys(storage.attributes);
-		//Calculate pokemon's maximum possible stats with given DVs
-		storage.max[0] = calculateHitpoints(level, storage.attributes.hp, storage.mode[0], storage.global.maxStatExp);
+		storage.max[0] = calculateHitpoints(level, storage.attributes.hp
+			, storage.mode[0], storage.global.maxStatExp);
+			
 		for(i = 1; i < storage.global.numstats; i++)
 		{
 			storage.max[i] = calculateStat(level, storage.attributes[keys[i + storage.global.base_stats_col]]
 				, storage.mode[i], storage.global.maxStatExp);
 		}
+		
 		storage.display.max = true;
 	}
 }
 
-
+// Evolve or devolve (@stage) the current Pokemon
 function evolve_pokemon(stage)
 {
 	var evolve = getPokemonEvolution(storage.current_pokemon[2]);
-	var evolvedIndex = evolve[stage] - 1;
-	var newPokemon = getPokemonEvolution(evolvedIndex);
-	var name = newPokemon.name;
-	storage.attributes = getPokemonByName(name);
-	storage.current_pokemon[1] = name;
-	savefa();
-}
-
-function add(a, b)
-{
-	return a + b;
+	var newPokemon = getPokemonEvolution(evolve[stage] - 1);
+	storage.attributes = getPokemonByName(newPokemon.name);
+	storage.current_pokemon[1] = storage.attributes.name;
+	saveAll();
 }
 
 /*
@@ -891,10 +780,12 @@ function update()
 		level++;//update temp variable for calculations down below .. check 
 		storage.stats.lvl = level;
 		var keys = Object.keys(storage.stats);
-		for(i = 1; i < countfa(keys); i++)
+		
+		for(i = 1; i < getLength(keys); i++)
 		{
 			storage.stats[keys[i]] = 0;
 		}
+		
 		storage.levelup = false;
 	}
 
@@ -1172,7 +1063,7 @@ function update()
 				{
 					var row = storage.records[keys[j]];
 					
-					for(i = 0; i < countfa(row); i++)//for each stat in record
+					for(i = 0; i < getLength(row); i++)//for each stat in record
 					{
 						if(row[i][0] > min[i])
 						{
@@ -1208,7 +1099,7 @@ function update()
 					var identical = [-1];//-1 or division by zero error occurs
 					//-1 is hack for occurrences having index of 16
 					
-					for(j = 0; j < countfa(occurrences) - 1; j++)
+					for(j = 0; j < getLength(occurrences) - 1; j++)
 					{
 						if(occurrences[j] == largest)
 						{
@@ -1217,12 +1108,12 @@ function update()
 					}
 					
 					var avg = 0;
-					for(j = 0; j < countfa(identical); j++)
+					for(j = 0; j < getLength(identical); j++)
 					{
 						avg += identical[j];
 					}
 					
-					avg = Math.floor(avg / countfa(identical));
+					avg = Math.floor(avg / getLength(identical));
 					storage.mode[i] = Math.max(min[i], avg);
 					var d = max[i] - min[i];
 					
@@ -1439,10 +1330,10 @@ function update()
 				
 				//calculate pokemon's rarity, which is the probability of finding same DVs or better in 
 				//any random wild pokemon
-				if(countfa(storage.records) > 0)
+				if(getLength(storage.records) > 0)
 				{
 					var rarity = 1;
-					for(i = 1; i < countfa(storage.mode); i++)
+					for(i = 1; i < getLength(storage.mode); i++)
 					{
 						rarity *= (16 - storage.mode[i]) / 16;	
 					}
@@ -1453,21 +1344,11 @@ function update()
 				//determine if a pokemon is shiny
 				var allten = false;
 				
-				if(storage.mode[2] == 10)
+				if(storage.mode[2] == 10 && storage.mode[3] == 10)
 				{
-					if(storage.gen == 1)
+					if(storage.mode[4] == 10)
 					{
-						if(storage.mode[3] == 10 && storage.mode[4] == 10)//spd & spc
-						{
-							allten = true;
-						}
-					}
-					else if(storage.gen == 2)
-					{
-						if(storage.mode[3] == 10 && storage.mode[5] == 10)//spc & spd
-						{
-							allten = true;
-						}
+						allten = true;
 					}
 				}
 				
@@ -1475,7 +1356,7 @@ function update()
 				{
 					var att = storage.mode[1];
 					if(att == 2 || att == 3 || att == 6 || att == 7 
-						|| att == 10 ||att == 11 || att == 14 || att == 15)
+						|| att == 10 || att == 11 || att == 14 || att == 15)
 					{
 						storage.shiny = true;
 					}
@@ -1494,13 +1375,16 @@ function update()
 		* Check the cache for same level and pokemon before running again?
 		*/
 		level = storage.stats.lvl;
+		
 		if(level > storage.global.minlevel && level <= storage.global.maxlevel)
 		{
 			keys = Object.keys(storage.attributes);
+			
 			for(i = 0; i <= storage.global.maxdv; i++)
 			{
 				storage.lookup[i] = [];
 				storage.lookup[i][0] = calculateHitpoints(level, storage.attributes.hp, i, storage.stat_exp[0]);
+				
 				for(j=1;j<storage.global.numstats;j++)
 				{
 					storage.lookup[i][j] = calculateStat(level, storage.attributes[keys[j + storage.global.base_stats_col]], i, storage.stat_exp[j]);
@@ -1610,25 +1494,32 @@ function update()
 
 	//get a list of Pokemon that can be encountered in the current zone and store it for use in view
 	var zone = storage.zone;
-	var in_zone = getPokemonInZone(zone, storage.sortby, storage.sortorder);	
+	var in_zone = getPokemonInZone(zone);	
 	storage.pokemon_in_zone = in_zone;
 
 	localStorage.setItem('storage', JSON.stringify(storage));
 	localStorage.setItem('saved', JSON.stringify(storage.savedpokemon));//must update storage object with saved pokemon
 }//End of update()
 
+// Service function adapted from PHP equivalent.
 function array_key_exists(lvl, records)
 {
 	var exists = false;
 	var keys = Object.keys(records);
+	
 	for(i = 0; i < keys.length; i++)
 	{
 		if(keys[i] == lvl)
+		{
 			exists = true;
+			break;
+		}
 	}
+	
 	return exists;
 }
 
+// Initialize global variables.
 function setGlobals(gen)
 {
 	storage.global = new Object();
@@ -1650,7 +1541,8 @@ function setGlobals(gen)
 		storage.global.numzones = 48;
 		storage.global.sortby = 'pokedex';
 	} 
-	else if(gen == 2) {
+	else if(gen == 2) 
+	{
 		storage.global.numpokemon = 251;
 		storage.global.numstats = 6;
 		storage.global.base_stats_col = 3;
@@ -1662,35 +1554,31 @@ function setGlobals(gen)
 	localStorage.setItem('storage', JSON.stringify(storage));
 }
 
-function sleep(ms) {
-  return new Promise(resolve => setTimeout(resolve, ms));
-}
-
-var tablesAreCached;
-
-/*
-* Start the application.
-*/
+// Refresh application. Called every page load.
 async function index()
 {
+	var gen;
+	globals = new Object();
 	storage = JSON.parse(localStorage.getItem('storage'));
 	tables = JSON.parse(localStorage.getItem('tables'));
-	globals = new Object();
-
+	
 	if(!isset(storage) || !storage.initialized)
 	{
 		storage = new Object();
-		var gen = parseInt(localStorage.getItem('gen'));
+		gen = parseInt(localStorage.getItem('gen'));
+		
 		if(isNaN(gen))
 			gen = 1;
-
+		
 		setGlobals(gen);
 		initialize(gen);
 		localStorage.setItem('tablesCached', 'false');
 		await cacheTables(gen);
-
 		localStorage.setItem('tables', JSON.stringify(tables));
 		localStorage.setItem('storage', JSON.stringify(storage));
+		
+		console.log(data);
+		
 		if(globals.cacheComplete)
 			localStorage.setItem('tablesCached', 'true');
 	} 
@@ -1700,22 +1588,7 @@ async function index()
 	localStorage.setItem('storage', JSON.stringify(storage));
 }
 
-function checkSavedPokemon()
-{
-	var saved = JSON.parse(localStorage.getItem('storage'));
-}
-
-function setVitamins(hp, att, def, spd, spc)
-{
-	//Create new array or use number index?
-	vitamins = array(hp, att, def, spd, spc);
-}
-
-function getVitamins() 
-{
-	return vitamins;
-}
-
+// Return zone caption given by zone @name
 function getZoneCaption(name)
 {
 	var caption;
@@ -1732,26 +1605,16 @@ function getZoneCaption(name)
 	return caption;
 }
 
+// Return entire table of Pokemon objects as array
 function getAllPokemon()
 {
 	return tables.pokemon;
 }
 
-function fixQuotes(name)
-{
-
-	if(pos = strpos(name, "'"))
-	{
-		name[pos] = "''";
-	}
-
-	return name;
-}
-
+// Return Pokemon object given by species @name
 function getPokemonByName(name)
 {
 	var pokemon;
-	var table = tables;
 
 	for(i = 0; i < storage.global.numpokemon; i++)
 	{
@@ -1765,9 +1628,24 @@ function getPokemonByName(name)
 	return pokemon;
 }
 
-function getPokemonInZone(zone, sortby, order)
+/* Return a Pokemon object given by row @index in Pokemon table.
+   Tables must be cached before this is called! */
+function getPokemon(index)
+{
+	return tables.pokemon[index];		
+}
+
+// Return row of evolution table
+function getPokemonEvolution(index)
+{
+	return tables['evolution'][index];
+}
+
+// Return array of Pokemon objects composed of only those found in @zone
+function getPokemonInZone(zone)
 {
 	var inzone;
+	
 	if(zone == 'allzones')
 	{
 		inzone = tables.pokemon;
@@ -1782,36 +1660,12 @@ function getPokemonInZone(zone, sortby, order)
 				inzone[j++] = pokemon[i];
 			}
 		}
-		
 	}
 
 	return inzone;
 }
 
-//returns pokemon at index (0 - 150)
-//tables must be cached before this is called
-function getPokemon(index)
-{
-	var pokemon = tables.pokemon;		
-	return pokemon[index];		
-}
-
-function getPokemonEvolution(index)
-{
-	var evolution = tables['evolution'];
-	return evolution[index];
-}
-
-function getTypes()
-{
-	return types;
-}
-
-function getSaved(index)
-{
-	return saved[index];
-}
-
+// Return zone captions as object indexed by zone name
 function getZoneCaptions()
 {
 	captions = new Object();
@@ -1824,78 +1678,65 @@ function getZoneCaptions()
 	return captions;
 }
 
-function getZones()
+// Load JSON file @path
+async function loadTable(path, title, index)
 {
-	//return zones;
-}
+	var temp;
+	
+	if(navigator.userAgent.indexOf("Firefox") !== -1)
+	{
+		temp = fetch(path)
+			.then(function(response) {
+				return response.json();
+			})
+			.then(function(myJson) {
+				return JSON.stringify(myJson);
+			});
+	} 
+	else 
+	{
+		temp = JSON.parse(data);
+		temp = JSON.stringify(temp[index]);
+	}
 
-function getCoordinates()
-{
-	//return coordinates;
-}
-
-function setTable(key, json)
-{
-	localStorage.setItem(key, JSON.stringify(myJson));
-}
-
-/* Load JSON file @path */
-async function loadTable(path, title)
-{
-	var table;
-	var key = 'temp' + title;
-
-	temp = fetch(path)
-		.then(function(response) {
-			return response.json();
-		})
-		.then(function(myJson) {
-			return JSON.stringify(myJson);
-		});
-		
 	return temp;
 }
 
-/* Load data tables into local storage */
+// Load data tables into local storage
 async function cacheTables(gen)
 {
+	var dir = 'assets/data/';
+	var title = ['pokemon', 'evolution', 'map', 'zones', 'coordinates'];
+	var path;
+	var region;
+	var temp;
+	
 	gen = parseInt(gen);
 	tables = new Object();
 
-	var path;
-	var dir = 'assets/data/';
-	var title = ['pokemon', 'evolution', 'map', 'zones', 'coordinates'];
-	var region;
-	
 	if(gen == 1)
-		region = 'kanto';
-	else if(gen == 2)
-		region = 'johto';
-
-	var cnt = 0;
-	var loadedTables = [];
-	
-	var oldI = 0;
-	
-	/*
-	* Due to async call of loadTable, execution in this thread will continue
-	* and i will increment. It would be at value 10 after the first table load,
-	* therefore the initial i value is stored before load call and restored after.
-	*/
-	for(i = 0; i < title.length; i++)
 	{
-		oldI = i;
-		path = dir + region + '_' + title[i] + '.json';
-		var temp = await loadTable(path, title[i]);
-		i = oldI;
-		tables[title[i]] = JSON.parse(temp);
+		region = 'kanto';
+		data = kanto_data;
+	}
+	else if(gen == 2)
+	{
+		region = 'johto';
+		data = johto_data;
+	}
+
+	for(t = 0; t < title.length; t++)
+	{
+		path = dir + region + '_' + title[t] + '.json';
+		temp = await loadTable(path, title[t], t);
+		tables[title[t]] = JSON.parse(temp);
 	}
 
 	globals.cacheComplete = true;
 	location.reload();
 	
-	//table array is not a JSON object yet, only its entries...
-	//stringify then parse to get object for local cache
+	//tables array is not a complete JSON object after loading
+	//stringify then parse to get a proper object for local cache
 	localStorage.setItem('tables', JSON.stringify(tables));
 	tables = JSON.parse(localStorage.getItem('tables'));
 }

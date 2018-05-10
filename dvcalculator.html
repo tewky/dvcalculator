@@ -1,7 +1,7 @@
 <!--
 	Title: DV Calculator
-	Description: A tool to help with finding the DVs of Pokemon in generation 1 and 2 games.
-    Copyright (C) 2018  Andrew Noble
+	Description: A web browser application for calculating diversification values in generation 1 and 2 Pokemon games.
+    Copyright (C) 2018 Andrew Noble
 
     This program is free software: you can redistribute it and/or modify
     it under the terms of the GNU General Public License as published by
@@ -11,37 +11,38 @@
     This program is distributed in the hope that it will be useful,
     but WITHOUT ANY WARRANTY; without even the implied warranty of
     MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
-    GNU General Public License for more details.
+    GNU General Public License for more details. 
 -->
 <!DOCTYPE html><!--HTML5-->
 <html>
 	<head>
-		<meta charset="UTF-8">
-		<meta name="description" content="Pokemon Gen 1 DV Calculator 
-		-- IV Calculator for Red / Blue / Yellow"/>	
 		<title>Pokemon DV Calculator</title>
-		<link href="assets/style.css" rel="stylesheet" type="text/css"/>
-		<link rel="shortcut icon" href="assets/favicon.ico"/>
-		<META NAME="ROBOTS" CONTENT="NOINDEX, NOFOLLOW">
+		<meta charset="UTF-8">
+		<meta name="description" content="Pokemon DV Calculator"/>	
+		<meta name="robots" content="noindex, nofollow">
 		<meta name="viewport" content="width=device-width, initial-scale=1"/>
+		<link href="assets/style.css" rel="stylesheet" type="text/css"/>
+		<!-- Fetch API only works for local JSON files in Firefox.
+			 Chrome prevents this for security, so data is duplicated
+			 in these JS files and loaded statically for compatibility. -->
+		<script src="assets/data/kanto_data.js" type="text/javascript"></script>
+		<script src="assets/data/johto_data.js" type="text/javascript"></script>
 		<script src="dvcalculator.js" type="text/javascript"></script>
 	</head>
 	<body>
 		<script>
-			var storage = JSON.parse(localStorage.getItem('storage'));
 			var cached = localStorage.getItem('tablesCached');
+			var storage = JSON.parse(localStorage.getItem('storage'));
 			var tables = JSON.parse(localStorage.getItem('tables'));
-			
 			if(cached == null)
 			{
 				localStorage.setItem('tablesCached', 'false');
-				cached	= 'false';
-			}
-			
-			if(cached == 'false')
 				cached = false;
+			}
 			else
+			{
 				cached = true;
+			}
 		</script>
 		<div id="CONTAINER">
 			<form id="FORM" method="POST">
@@ -91,7 +92,7 @@
 						}
 					</script>
 					<h3>DV Calculator BETA</h3>
-					<input type='button' id='RESET' name='reset' class='floatRight' value='reset' onclick='resetfa()'/>
+					<input type='button' id='RESET' name='reset' class='floatRight' value='reset' onclick='resetCalc()'/>
 					<div id='PROMPT'>
 						<input id='CONFIRM_RESET' name='confirm' type='checkbox'/>
 					</div>
@@ -112,10 +113,12 @@
 							
 								if(storage.shiny)
 								{
-									var img = document.createElement(img);
+									var img = document.createElement("img");
 									img.setAttribute('id', 'SHINY');
 									img.setAttribute('src', 'assets/shiny.png');
+									$('SELECT').appendChild(img);
 								}
+								
 								
 								var select = document.createElement('select');
 								select.setAttribute('name', 'current');
@@ -434,11 +437,11 @@
 						</tr>
 						<tr id='CONTROLS'>
 							<td id="POKEMON_CONTROLS" class='controls' colspan="7">
-								<input type='button' id='CALCULATE' class='button' name='calculate' value='Calculate' onclick='calculatefa()'/>
-								<button type='button' id='LEVELUP' name='levelup' onclick='levelupfa()'><img src='assets/candy.png'/></button>
-								<button type='button' id='REVERT' name='revert' onclick='devolvefa()'><img src='assets/devolve.png'/></button>
-								<button type='button' id='EVOLVE' name='evolve' onclick='evolvefa()'><img src='assets/evolve.png'/></button>
-								<input type='button' id='SAVE' class='button' name='save' value='Save' onclick='savefa()'/>
+								<input type='button' id='CALCULATE' class='button' name='calculate' value='Calculate' onclick='calculateDV()'/>
+								<button type='button' id='LEVELUP' name='levelup' onclick='levelUp()'><img src='assets/candy.png'/></button>
+								<button type='button' id='REVERT' name='revert' onclick='devolvePokemon()'><img src='assets/devolve.png'/></button>
+								<button type='button' id='EVOLVE' name='evolve' onclick='evolvePokemon()'><img src='assets/evolve.png'/></button>
+								<input type='button' id='SAVE' class='button' name='save' value='Save' onclick='saveAll()'/>
 								
 								<script>
 									if(cached)
@@ -637,6 +640,7 @@
 
 										var captions = getZoneCaptions();//hack this back into the js file
 										var coords = tables.coordinates;
+										
 										for(i = 0; i < coords.length; i++)
 										{
 											var name = coords[i].name;
@@ -652,7 +656,7 @@
 											div.style.setProperty('position', 'absolute');
 											div.style.setProperty('left', left + '%');
 											div.style.setProperty('top', fromTop + '%');
-
+											
 											$('MAP_CONTAINER').appendChild(div);
 					
 											var style = document.createElement('style');
@@ -663,6 +667,15 @@
 											$('MAP_CONTAINER').appendChild(style);
 											
 										}
+										//
+											/*var left = coords[i].rel_x;
+											var fromTop = coords[i].rel_y;
+											var img = document.createElement('img');
+											img.setAttribute('id', 'PLAYER');
+											img.setAttribute('src', 'assets/maps/player.png');
+											img.style.setProperty('position', 'absolute');
+											img.style.setProperty('left', left + '%');
+											img.style.setProperty('top', fromTop + '%');*/
 									}
 									</script>
 								</div>
@@ -854,7 +867,7 @@
 								var save = document.createElement('input');
 								save.setAttribute('type', 'button');
 								save.setAttribute('name', 'save_tracker');
-								save.setAttribute('onclick', 'savefa()');
+								save.setAttribute('onclick', 'saveAll()');
 								save.setAttribute('value', 'Save');
 								td.appendChild(save);
 								tr.appendChild(td);
@@ -980,83 +993,25 @@
 			</form>		
 		</div>
 		<div id="GUIDE">
-			<h3>User Guide</h3><br/>
-			<span class="italic">Version 2.0 BETA -- 03/23/2018</span><br/>
-			<p><b>This is a beta version that is in testing. It might contain bugs that cause the application to
-			give unexpected results. Some features might be non-functional. Please report any bugs that you find, and make sure to check <a href="https://github.com/tewky/dvcalculator">
-			https://github.com/tewky/dvcalculator</a> for new versions regularly.</b></p><br/>
-			<p class="italic">
-				Copyright (&copy;) 2018 Andrew Noble<br/>
+			<h3>License</h3><br/>
+			<span class="italic">DV Calculator 2.0B -- 05/09/2018</span><br/>
+			<p>
+				<b>Title:</b> Pokemon DV Calculator<br/>
+				<b>Description:</b> A tool for calculating individual values (DVs) in the first and second generation Pokemon games.<br/>
+				<b>Copyright</b> (&copy;) 2018 Andrew Noble
 			</p>
-			<p class="italic">
+			<p>
 				This program is free software: you can redistribute it and/or modify
 				it under the terms of the GNU General Public License as published by
 				the Free Software Foundation, either version 3 of the License, or
 				(at your option) any later version.
 			</p>
-			<p class="italic">
+			<p>
 				This program is distributed in the hope that it will be useful,
 				but WITHOUT ANY WARRANTY; without even the implied warranty of
 				MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
 				GNU General Public License for more details.
 			</p>
-				<br/>
-
-			<span class="title">New Pokemon</span>
-			<ul>
-				<li>Select pokemon, enter its current stats, then press calculate</li>
-				<li>Battle with it and track every knockout *</li>
-				<li>Immediately after each level up, enter its new stats and press calculate</li>
-				<li>Repeat until you are satisfied with the DVs accuracy (0% gray, 50% yellow, 99% red)</li>
-			</ul><br/>
-			<span>* If you are going to swap this Pokemon out during a battle, add it to the party by checking the box next to the Save button, then switch to the other Pokemon and mark down the KO.
-				All Pokemon that participated in the battle must be displayed in the "Pokemon in battle' tracker before you mark down a KO in order
-				for the stat experience to be distributed correctly.</span><br/><br/>
-			<span class="title">Veteran Pokemon</span>
-			<ul>
-				<li>Press the Veteran button</li>
-				<p class="italic">Level 100 only: battle with your Pokemon and occasionally 
-				deposit it in Bill's PC. Make note of its stats before deposit and after 
-				withdrawal. If there is no change, its stat XP is maxed. It might take as 
-				many as 30 KOs before its stats change.</p>
-				<li>If stat XP is maxed, set the "Max" option, enter its current stats, then press Calculate</li>
-				<li>If not, use the vitamin trick. 
-				<span>Save the game first!</span></li>
-				<li>For each stat, buy 10 of the associated vitamin, then...</li>
-				<li>Record how many vitamins you were able to use before the message
-				"it won't have any effect" was displayed
-				<br/><span class="italic">If you can't use at least 1 vitamin for a stat, there is 
-				no way to find that stat experience until it has reached the cap -- stop here.
-				</span></li>
-				<li>Revert the game</li>
-				<li>Enter vitamins used, current stats, then press Calculate</li>
-				<li>Level up with rare candies and calculate at each level to improve accuracy. 
-				<span class="italic">50% accurate (DVs show as yellow) is the best possible 
-				with the vitamin method.</span></li>
-			</ul><br/>		
-			<span class="title">Credits</span><br/>			
-			<p class="italic">
-				<a href="http://www.geocities.ws/thelegendarydogs/faqs/software/dvcalc/17/dvcalc17.html">Phil Erwin's Pokemon DV Calculator</a> for inspiration<br/>
-				<a href="http://pokedream.com/games/goldsilver/stat.php">
-				Pokedream.com's Gold/Silver DV Calculator</a> for reference<br/>				
-				<a href="http://www.smogon.com/ingame/guides/rby_gsc_stats">
-				Smogon University: All About Stats</a> for articles<br/>
-				<a href="http://www.dragonflycave.com/stats.aspx">
-				The Cave of Dragonflies: Stat Mechanics</a> for articles<br/>
-				<a href="http://www.psypokes.com/gsc/dvguide.php">
-				Psypokes: GSC DV and Hidden Power guide</a> for articles<br/><br/>
-				<a href="http://bulbapedia.bulbagarden.net/">Bulbapedia</a>
-				for articles and resources. The data & images used are distributed under the
-				<a href="http://creativecommons.org/licenses/by-nc-sa/2.5/">
-				CC BY-NC-SA 2.5</a> license. Modifications: retail box images had 
-				opacity reduced. Pokemon icons had empty space trimmed. Pokemon and zone data were tabulated.<br/><br/>
-				<a href="https://commons.wikimedia.org/wiki/File:Pokemon_types.png">
-				Jayster1245 @ Wikimedia Commons</a> for resources. The images used are distributed under the 
-				<a href="https://creativecommons.org/licenses/by-sa/4.0/deed.en">CC BY-SA 4.0 license.</a> Modification: type icons
-				were cropped from their original format.<br/><br/>
-				<span>&copy; The data and/or images provided under the Creative Commons licenses are copyrighted material
-				and remain the property of their respective owners as listed above.</span>				
-			</p><br/>
 		</div>
 	</body>
 </html>
