@@ -1,25 +1,24 @@
 <!--
 	Title: DV Calculator
 	Description: A web browser application for calculating diversification values in generation 1 and 2 Pokemon games.
-    Copyright (C) 2018 Andrew Noble
+	Copyright (C) 2018 Andrew Noble
 
-    This program is free software: you can redistribute it and/or modify
-    it under the terms of the GNU General Public License as published by
-    the Free Software Foundation, either version 3 of the License, or
-    (at your option) any later version.
+	This program is free software: you can redistribute it and/or modify
+	it under the terms of the GNU General Public License as published by
+	the Free Software Foundation, either version 3 of the License, or
+	(at your option) any later version.
 
-    This program is distributed in the hope that it will be useful,
-    but WITHOUT ANY WARRANTY; without even the implied warranty of
-    MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
-    GNU General Public License for more details. 
+	This program is distributed in the hope that it will be useful,
+	but WITHOUT ANY WARRANTY; without even the implied warranty of
+	MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+	GNU General Public License for more details.
 -->
 <!DOCTYPE html><!--HTML5-->
 <html>
 	<head>
 		<title>Pokemon DV Calculator</title>
 		<meta charset="UTF-8">
-		<meta name="description" content="Pokemon DV Calculator"/>	
-		<meta name="robots" content="noindex, nofollow">
+		<meta name="description" content="Pokemon DV Calculator"/>
 		<meta name="viewport" content="width=device-width, initial-scale=1"/>
 		<link href="assets/style.css" rel="stylesheet" type="text/css"/>
 		<!-- Fetch API only works for local JSON files in Firefox.
@@ -34,6 +33,7 @@
 			var cached = localStorage.getItem('tablesCached');
 			var storage = JSON.parse(localStorage.getItem('storage'));
 			var tables = JSON.parse(localStorage.getItem('tables'));
+
 			if(cached == null)
 			{
 				localStorage.setItem('tablesCached', 'false');
@@ -57,8 +57,10 @@
 						button.setAttribute('name', 'gen2');
 						button.setAttribute('onclick', 'changeGen()');
 						var value = 'gen 2';
+
 						if(storage.gen == 2)
 							value = 'gen 1';
+
 						button.setAttribute('value', value);
 						$('HEADER').appendChild(button);
 					</script>
@@ -76,28 +78,27 @@
 							var className = ['gold', 'silver', 'crystal'];
 							var headingText = ['Gold', 'Silver', 'Crystal'];
 						}
-						
+
 						if(cached)
 						{
 							for(i = 0; i < id.length; i++)
 							{
-						
 								var h3 = document.createElement('h3');
+								var text = document.createTextNode(headingText[i]);
 								h3.setAttribute('id', id[i]);
 								h3.setAttribute('class', 'boxArt ' + className[i]);
-								var text = document.createTextNode(headingText[i]);
 								h3.appendChild(text);
 								$('HEADER').appendChild(h3);
 							}
 						}
 					</script>
 					<h3>DV Calculator BETA</h3>
-					<input type='button' id='RESET' name='reset' class='floatRight' value='reset' onclick='resetCalc()'/>
+					<input class='floatRight' name='reset' type='button' value='reset' onclick='resetCalc()'/>
 					<div id='PROMPT'>
 						<input id='CONFIRM_RESET' name='confirm' type='checkbox'/>
 					</div>
 				</div>
-				<div class='column'>			
+				<div class='column'>
 					<h4 id='SELECT'>
 						<span>Pokemon</span>
 						<script>
@@ -110,7 +111,13 @@
 								pokedex.appendChild(text);
 								pokedex.setAttribute('id', 'POKEDEX');
 								$('SELECT').appendChild(pokedex);
-							
+
+								var species = document.createElement('span');
+								text = document.createTextNode(storage.attributes.name);
+								species.appendChild(text);
+								species.setAttribute('id', 'SPECIES');
+								$('SELECT').appendChild(species);
+
 								if(storage.shiny)
 								{
 									var img = document.createElement("img");
@@ -118,47 +125,50 @@
 									img.setAttribute('src', 'assets/shiny.png');
 									$('SELECT').appendChild(img);
 								}
-								
-								
+
 								var select = document.createElement('select');
 								select.setAttribute('name', 'current');
 								select.setAttribute('id', 'POKEMON_SELECT');
 								select.setAttribute('onchange', 'changePokemon()');
-
-								var keys = Object.keys(storage.savedpokemon);								
+								var keys = Object.keys(storage.savedpokemon);
 								var current = storage.current_pokemon[0];
+
 								for(i = 0; i < keys.length; i++)
 								{
 									var pokemon = storage.savedpokemon[keys[i]];
 									var option = document.createElement('option');
 									var text = document.createTextNode(pokemon.pokemon[0]);
+
 									if(current == pokemon.pokemon[0])
 									{
 										option.setAttribute('selected', 'selected');
 									}
+
 									option.setAttribute('class', 'highlighted');
 									option.setAttribute('value', pokemon.pokemon[0]);
 									option.appendChild(text);
 									select.appendChild(option);
 								}
-								
+
 								//add all other pokemon to select list
 								for(i = 0; i < storage.global.numpokemon; i++)
 								{
 									var pokemon = tables.pokemon[i];
 									var option = document.createElement('option');
 									var text = document.createTextNode(pokemon.name);
+
 									if(current == pokemon.name)
 										option.setAttribute('selected', 'selected');
+
 									option.setAttribute('value', pokemon.name);
 									option.appendChild(text);
 									select.appendChild(option);
 								}
+
 								$('SELECT').appendChild(select);
 							}
 						</script>
 					</h4>
-					<h5></h5>
 					<table id="STATS">
 						<tr id="STATS_HEADINGS" class="title">
 							<td>Lvl</td>
@@ -166,20 +176,20 @@
 							<td>Att</td>
 							<td>Def</td>
 							<script>
-							if(cached)
-							{
-								var headings = ['Spd', 'Spc'];
-								if(storage.gen == 2)
-									headings = ['Spd', 'Sp.A', 'Sp.D'];
-									
-								for(var i in headings)
+								if(cached)
 								{
-									var td = document.createElement('td');
-									var text = document.createTextNode(headings[i]);
-									td.appendChild(text);
-									$("STATS_HEADINGS").appendChild(td);
+									var headings = ['Spd', 'Spc'];
+									if(storage.gen == 2)
+										headings = ['Spd', 'Sp.A', 'Sp.D'];
+
+									for(var i in headings)
+									{
+										var td = document.createElement('td');
+										var text = document.createTextNode(headings[i]);
+										td.appendChild(text);
+										$("STATS_HEADINGS").appendChild(td);
+									}
 								}
-							}
 							</script>
 						</tr>
 						<tr id="STAT_INPUT">
@@ -194,7 +204,7 @@
 								input.setAttribute('max', '999');
 								input.setAttribute('name', 'lvl');
 								input.setAttribute('value', storage.stats['lvl']);
-								
+
 								for(i = 0; i < storage.global.numstats + 1; i++)
 								{
 									td = document.createElement('td');
@@ -220,7 +230,7 @@
 								var error = document.createElement('div');
 								error.setAttribute('id', 'ERROR');
 								var text = '';
-								
+
 								if(storage.outofrange == true)
 								{
 									text = document.createTextNode("Out of range!");
@@ -253,6 +263,7 @@
 									var text = document.createTextNode('Exp');
 									td.appendChild(text);
 									$("STAT_EXP").appendChild(td);
+
 									for(i = 0; i < storage.global.numstats; i++)
 									{
 										var value = storage.stat_exp[i];
@@ -275,7 +286,7 @@
 								var colspan = storage.global.numstats + 1;
 								var tr = document.createElement('tr');
 								var td = document.createElement('td');
-								
+
 								if(isset(storage.dvalues))
 								{
 									td = document.createElement('td');
@@ -283,6 +294,7 @@
 									var text = document.createTextNode('Last');
 									td.appendChild(text);
 									tr.appendChild(td);
+
 									for(i = 0; i < storage.dvalues.length; i++)
 									{
 										td = document.createElement('td');
@@ -293,6 +305,7 @@
 										td.appendChild(text);
 										tr.appendChild(td);
 									}
+
 								}
 								var tbodyRef = $('STATS').getElementsByTagName('tbody')[0];
 								tbodyRef.appendChild(tr);
@@ -308,6 +321,7 @@
 								td.appendChild(text);
 								tr.appendChild(td);
 								var accuracies = ["gray", "yellow", "red"];
+
 								for(i = 0; i < storage.mode.length; i++)
 								{
 									td = document.createElement('td');
@@ -317,6 +331,7 @@
 									td.appendChild(text);
 									tr.appendChild(td);
 								}
+
 								var tbodyRef = $('STATS').getElementsByTagName('tbody')[0];
 								tbodyRef.appendChild(tr);
 							}
@@ -331,10 +346,9 @@
 								var text = document.createTextNode('Base');
 								td.appendChild(text);
 								$("BASE_STATS").appendChild(td);
-
 								var keys = Object.keys(storage.attributes);
-								for(i = storage.global.base_stats_col
-									; i < storage.global.base_stats_col + storage.global.numstats; i++)
+
+								for(i = storage.global.base_stats_col; i < storage.global.base_stats_col + storage.global.numstats; i++)
 								{
 									td = document.createElement('td');
 									var text = document.createTextNode(storage['attributes'][keys[i]]);
@@ -355,6 +369,7 @@
 									var text = document.createTextNode('Max');
 									td.appendChild(text);
 									$("MAX").appendChild(td);
+
 									for(i = 0; i < storage.global.numstats; i++)
 									{
 										td = document.createElement('td');
@@ -362,6 +377,7 @@
 										td.appendChild(text);
 										$("MAX").appendChild(td);
 									}
+
 								}
 							}
 							</script>
@@ -377,6 +393,7 @@
 									var text = document.createTextNode('Best');
 									td.appendChild(text);
 									$("BEST").appendChild(td);
+
 									for(i = 0; i < storage.global.numstats; i++)
 									{
 										td = document.createElement('td');
@@ -384,6 +401,7 @@
 										td.appendChild(text);
 										$("BEST").appendChild(td);
 									}
+
 								}
 							}
 							</script>
@@ -397,18 +415,15 @@
 									var text = document.createTextNode('Hipo');
 									td.appendChild(text);
 									$("HIPO").appendChild(td);
-									
 									td = document.createElement('td');
 									td.setAttribute('colspan', 3);
 									var text = document.createTextNode(String(storage.hiddenpower.damage));
 									td.appendChild(text);
 									$("HIPO").appendChild(td);
-									
 									td = document.createElement('td');
 									td.setAttribute('colspan', 2);
-									
 									var type = storage.hiddenpower.type;
-									var src = "assets/types/" + type + ".png";
+									var src = "assets/types/" + type.toLowerCase() + ".png";
 									var typeImg = document.createElement('img');
 									typeImg.setAttribute('class', 'types');
 									typeImg.setAttribute('src', src);
@@ -426,7 +441,6 @@
 									var text = document.createTextNode('Rare');
 									td.appendChild(text);
 									$("RARE").appendChild(td);
-									
 									td = document.createElement('td');
 									td.setAttribute('colspan', storage.global.numstats);
 									var text = document.createTextNode("1 / " + String(storage.rarity));
@@ -442,7 +456,7 @@
 								<button type='button' id='REVERT' name='revert' onclick='devolvePokemon()'><img src='assets/devolve.png'/></button>
 								<button type='button' id='EVOLVE' name='evolve' onclick='evolvePokemon()'><img src='assets/evolve.png'/></button>
 								<input type='button' id='SAVE' class='button' name='save' value='Save' onclick='saveAll()'/>
-								
+
 								<script>
 									if(cached)
 									{
@@ -453,35 +467,32 @@
 
 										if(storage.track == true)
 											track.setAttribute('checked', 'checked');
-										
+
 										$('POKEMON_CONTROLS').appendChild(track);
-									
 										var attributes = storage.attributes;
-										
 										var src;
 										var type = attributes['type'].split('-');
-										
+
 										for(i = 0; i < type.length; i++)
 										{
-											src = "assets/types/" + type[i] + ".png";
+											src = "assets/types/" + type[i].toLowerCase() + ".png";
 											var typeImg = document.createElement('img');
 											typeImg.setAttribute('class', 'types');
 											typeImg.setAttribute('src', src);
 											$('SELECT').insertBefore(typeImg, $('POKEMON_SELECT'));
 										}
-										
+
 										src = String(attributes.pokedex);
-										
+
 										if(src.length < 2)
 											src = "00" + src;
 										else if(src.length < 3)
 											src = "0" + src;
-											
+
 										src = 'assets/pokemon/' + src + "MS.png";
 										var img = document.createElement('img');
 										img.setAttribute('class', 'avatar');
 										img.setAttribute('src', src);
-										
 										$('SELECT').insertBefore(img, $('POKEMON_SELECT'));
 									}
 								</script>
@@ -489,17 +500,16 @@
 						</tr>
 						<script>
 							var keys = Object.keys(storage.records);
+
 							if(keys.length > 0)
 							{
 								var tr = document.createElement('tr');
 								tr.setAttribute('id', 'RECORDS');
-								
 								var td = document.createElement('td');
 								td.setAttribute('class', 'index small');
 								var text = document.createTextNode('Lvl');
 								td.appendChild(text);
 								tr.appendChild(td);
-								
 								td = document.createElement('td');
 								td.setAttribute('colspan', storage.global.numstats);
 								text = document.createTextNode('Records');
@@ -511,13 +521,12 @@
 								{
 									tr = document.createElement('tr');
 									tr.setAttribute('class', 'record');
-									
 									td = document.createElement('td');
 									td.setAttribute('class', 'index');
 									text = document.createTextNode(keys[i]);
 									td.appendChild(text);
 									tr.appendChild(td);
-									
+
 									for(j = 0; j < storage.global.numstats; j++)
 									{
 										td = document.createElement('td');
@@ -530,7 +539,7 @@
 										td.appendChild(text);
 										tr.appendChild(td);
 									}
-									
+
 									$('STATS').appendChild(tr);
 								}
 							}
@@ -542,27 +551,28 @@
 							{
 								var tr = document.createElement('tr');
 								var td = document.createElement('td');
-								td.setAttribute('class', 'index');
+								/*td.setAttribute('class', 'index');
+								td.setAttribute('colspan', 2);
 								var text = document.createTextNode('LVL ' + storage.stats.lvl);
 								td.appendChild(text);
-								tr.appendChild(td);
+								tr.appendChild(td);*/
 								td = document.createElement('td');
 								td.setAttribute('class', 'index');
-								td.setAttribute('colspan', 6);
+								td.setAttribute('colspan', 7);
 								text = document.createTextNode('Lookup table');
 								td.appendChild(text);
 								tr.appendChild(td);
 								$('LOOKUP').appendChild(tr);
-								
+
 								tr = document.createElement('tr');
-								
+
 								var headings = ['DV', 'HP', 'Att', 'Def', 'Spd'];
-								
+
 								if(storage.gen == 2)
 									headings.push('Spc.A', 'Spc.D');
 								else
 									headings.push('Spc');
-								
+
 								for(i = 0; i < headings.length; i++)
 								{
 									td = document.createElement('td');
@@ -570,7 +580,7 @@
 									td.appendChild(text);
 									tr.appendChild(td);
 								}
-								
+
 								$('LOOKUP').appendChild(tr);
 
 								for(i = 0; i <= storage.global.maxdv; i++)
@@ -581,15 +591,15 @@
 									text = document.createTextNode(String(i));
 									td.appendChild(text);
 									tr.appendChild(td);
-									
+
 									for(j = 0; j < storage.global.numstats; j++)
 									{
 										td = document.createElement('td');
 										text = document.createTextNode(storage.lookup[i][j]);
 										td.appendChild(text);
-										tr.appendChild(td);	
+										tr.appendChild(td);
 									}
-									
+
 									$('LOOKUP').appendChild(tr);
 								}
 							}
@@ -617,7 +627,7 @@
 								option.appendChild(text);
 								select.appendChild(option);
 							}
-							
+
 							$('ZONE_CONTROLS').appendChild(select);
 						}
 						</script>
@@ -630,52 +640,37 @@
 									if(cached)
 									{
 										var src = 'assets/maps/kanto.png';
+
 										if(storage.gen == 2)
 											src = 'assets/maps/johto.png';
-										
+
 										var img = document.createElement('img');
 										img.setAttribute('id', 'MAP');
 										img.setAttribute('src', src);
 										$('MAP_CONTAINER').appendChild(img);
-
 										var captions = getZoneCaptions();//hack this back into the js file
 										var coords = tables.coordinates;
-										
+
 										for(i = 0; i < coords.length; i++)
 										{
 											var name = coords[i].name;
 											var left = coords[i].rel_x;
 											var fromTop = coords[i].rel_y;
 											var caption = captions[name];
-
 											var div = document.createElement('div');
 											div.setAttribute('id', name);
 											div.setAttribute('class', 'clickarea');
 											div.setAttribute('onclick', 'document.getElementById(\"ZONE_SELECT\").value=\"' + name + '\"; changeZone();');
-											
 											div.style.setProperty('position', 'absolute');
 											div.style.setProperty('left', left + '%');
 											div.style.setProperty('top', fromTop + '%');
-											
 											$('MAP_CONTAINER').appendChild(div);
-					
 											var style = document.createElement('style');
-											
 											style.innerHTML = 'div#' + name + ':hover::after { content: \"' + caption + '\"; \
 												background-color: #ebebeb; float: left; box-shadow: inset #575757 -1px -1px 5px; border-radius: 3px; \
 												position: relative; left: -50px; top: -30px; width: 150px; padding: 3px;}';
 											$('MAP_CONTAINER').appendChild(style);
-											
 										}
-										//
-											/*var left = coords[i].rel_x;
-											var fromTop = coords[i].rel_y;
-											var img = document.createElement('img');
-											img.setAttribute('id', 'PLAYER');
-											img.setAttribute('src', 'assets/maps/player.png');
-											img.style.setProperty('position', 'absolute');
-											img.style.setProperty('left', left + '%');
-											img.style.setProperty('top', fromTop + '%');*/
 									}
 									</script>
 								</div>
@@ -694,62 +689,41 @@
 										label.setAttribute('for', 'MAX_EXP');
 										text = document.createTextNode('Max Exp');
 										label.appendChild(text);
-										
+
 										$('TRACKER_CONTROLS').appendChild(h3);
 										$('TRACKER_CONTROLS').appendChild(label);
-										
+
 										var input = document.createElement('input');
 										input.setAttribute('type', 'checkbox');
 										input.setAttribute('id', 'MAX_EXP');
 										input.setAttribute('name', 'maxexp');
-										
+
 										if(storage.maxexp)
 											input.setAttribute('checked', 'checked');
-										
+
 										$('TRACKER_CONTROLS').appendChild(input);
-										
-										var div = document.createElement('div'); 
+
+										var div = document.createElement('div');
 										div.setAttribute('id', 'VITAMIN_LABELS');
-										var span = document.createElement('span');
-										span.setAttribute('id', 'HP_UP');
-										text = document.createTextNode('HP Up');
-										span.appendChild(text);
-										div.appendChild(span);
-										
-										span = document.createElement('span');
-										span.setAttribute('id', 'PROTEIN');
-										text = document.createTextNode('Protein');
-										span.appendChild(text);
-										div.appendChild(span);
-										
-										span = document.createElement('span');
-										span.setAttribute('id', 'IRON');
-										text = document.createTextNode('Iron');
-										span.appendChild(text);
-										div.appendChild(span);
-										
-										span = document.createElement('span');
-										span.setAttribute('id', 'CARBOS');
-										text = document.createTextNode('Carbos');
-										span.appendChild(text);
-										div.appendChild(span);
-										
-										span = document.createElement('span');
-										span.setAttribute('id', 'CALCIUM');
-										text = document.createTextNode('Calcium');
-										span.appendChild(text);
-										div.appendChild(span);
-										
+										var vitaminLabels = ['HP Up', 'Protein', 'Iron', 'Carbos', 'Calcium'];
+
+										for(i = 0; i < vitaminLabels.length; i++)
+										{
+											var span = document.createElement('span');
+											span.setAttribute('id', vitaminLabels[i]);
+											text = document.createTextNode(vitaminLabels[i]);
+											span.appendChild(text);
+											div.appendChild(span);
+										}
+
 										$('TRACKER_CONTROLS').appendChild(div);
-										
-										div = document.createElement('div'); 
+										div = document.createElement('div');
 										div.setAttribute('id', 'VETERAN');
-										
-										
 										var names = ['vithp', 'vitatt', 'vitdef', 'vitspd', 'vitspc'];
-										if(storage['gen'] == 2)
-											names = ['vithp', 'vitatt', 'vitdef', 'vitspca', 'vitspcd', 'vitspd'];
-										
+
+									//	if(storage['gen'] == 2)
+										//	names.splice(4, 2, 'vitspca', 'vitspcd');
+
 										for(i = 0; i < names.length; i++)
 										{
 											input = document.createElement('input');
@@ -761,90 +735,64 @@
 											input.setAttribute('value', storage.vitamins[i]);
 											div.appendChild(input);
 										}
-										
+
 										$('TRACKER_CONTROLS').appendChild(div);
 									}
 								</script>
 							</td>
 						</tr>
 							<script>
-							if(storage.display.party)
-							{
-								var tr = document.createElement('tr');
-								tr.setAttribute('id', 'PARTY');
-								
-								var td = document.createElement('td');
-								td.setAttribute('colspan', storage.global.numstats);
-								var div = document.createElement('div');
-								div.setAttribute('class', 'index');
-								var text = document.createTextNode('Pokemon in battle');
-								var br = document.createElement('br');
-								div.appendChild(text);
-								
-								td.appendChild(div);
-								td.appendChild(br);
-								
-								var keys = Object.keys(storage.savedpokemon);
-								var count = 1;
-								
-								for(i = 0; i < keys.length + 1; i++)
+								if(storage.display.party)
 								{
-									if(i == 0) {
-											var id = storage.current_pokemon[0];
+									var tr = document.createElement('tr');
+									tr.setAttribute('id', 'PARTY');
+									var td = document.createElement('td');
+									td.setAttribute('colspan', storage.global.numstats);
+									var div = document.createElement('div');
+									div.setAttribute('class', 'index');
+									var text = document.createTextNode('Pokemon in battle');
+									var br = document.createElement('br');
+									div.appendChild(text);
+									td.appendChild(div);
+									td.appendChild(br);
+									var keys = Object.keys(storage.savedpokemon);
+									var count = 1;
 
-											var src = String(storage.current_pokemon[2] + 1);
-											if(src.length < 2)
-												src = "00" + src;
-											else if(src.length < 3)
-												src = "0" + src;
-											src = 'assets/pokemon/' + src + "MS.png";
-											
-											var div = document.createElement('div');
-											div.setAttribute('id', id);
-											
-											var img = document.createElement('img');
-											img.setAttribute('src', src);
-											img.setAttribute('class', 'framed');
-											
-											div.appendChild(img);
-											var sup = document.createElement('sup');
-											sup.setAttribute('class', 'floatLeft');
-											text = document.createTextNode(String(count));
-											sup.appendChild(text);
-											div.appendChild(sup);
-											td.appendChild(div);
-											
-											var style = document.createElement('style');
-											text = document.createTextNode('#' + id + ":hover::after {content:'" 
-												+ id + "'; float: left; position: absolute; top: 4px; right: 60%; width: 40px; font-weight: bold; font-variant: small-caps;}");
-											style.appendChild(text);
-											td.appendChild(style);
-											count++;
-									} else if(storage.savedpokemon[keys[i - 1]].pokemon[0] != storage.current_pokemon[0]) {
-										var id = storage.savedpokemon[keys[i - 1]].pokemon[0];
-										
-										if(storage.savedpokemon[keys[i - 1]].track)
+									for(i = 0; i < keys.length + 1; i++)
+									{
+										var track = false;
+
+										if(i == 0)
 										{
-											var src = String(storage.savedpokemon[keys[i - 1]].pokemon[2] + 1);
-											
+											var id = storage.current_pokemon[0];
+											var src = String(storage.current_pokemon[2] + 1)
+											track = true;
+										}
+										else if(storage.savedpokemon[keys[i - 1]].track)
+										{
+											id = storage.savedpokemon[keys[i - 1]].pokemon[0];
+											src = String(storage.savedpokemon[keys[i - 1]].pokemon[2] + 1)
+
+											if(id != storage.current_pokemon[0])
+												track = true;
+										}
+
+										if(track)
+										{
 											if(src.length < 2)
 												src = "00" + src;
 											else if(src.length < 3)
 												src = "0" + src;
+
 											src = 'assets/pokemon/' + src + "MS.png";
-											
 											var div = document.createElement('div');
-											var id = storage.savedpokemon[keys[i - 1]].pokemon[0];
 											div.setAttribute('id', id);
-											
 											var img = document.createElement('img');
 											img.setAttribute('src', src);
-											
-											if(storage.current_pokemon[0] === id)
-											{
+
+											if(i == 0)
 												img.setAttribute('class', 'framed');
-											}
-											
+
 											div.appendChild(img);
 											var sup = document.createElement('sup');
 											sup.setAttribute('class', 'floatLeft');
@@ -852,109 +800,107 @@
 											sup.appendChild(text);
 											div.appendChild(sup);
 											td.appendChild(div);
-											
 											var style = document.createElement('style');
 											text = document.createTextNode('#' + id + ":hover::after {content:'"
-												+ id + "'; float: left; position: absolute; top: 4px; right: 60%; width: 40px; font-weight: bold; font-variant: small-caps;}");
+												+ id + "'; float: left; position: absolute; top: 1px; left: 35%; width: 40px; font-weight: bold; font-variant: small-caps;}");
 											style.appendChild(text);
 											td.appendChild(style);
-
 											count++;
 										}
 									}
+
+									var save = document.createElement('input');
+									save.setAttribute('type', 'button');
+									save.setAttribute('name', 'save_tracker');
+									save.setAttribute('onclick', 'saveAll()');
+									save.setAttribute('value', 'Save');
+									td.appendChild(save);
+									tr.appendChild(td);
+									$('ZONE').getElementsByTagName('tbody')[0].appendChild(tr);
 								}
-								
-								var save = document.createElement('input');
-								save.setAttribute('type', 'button');
-								save.setAttribute('name', 'save_tracker');
-								save.setAttribute('onclick', 'saveAll()');
-								save.setAttribute('value', 'Save');
-								td.appendChild(save);
-								tr.appendChild(td);
-								$('ZONE').getElementsByTagName('tbody')[0].appendChild(tr);
-							}
 						</script>
 					</table>
 					<table id="TRACKER">
 						<tr class="heading" id='TRACKER_HEADINGS'>
 							<script>
-							if(cached)
-							{
-								var labels = ['Name', '№', 'Type', 'HP', 'Att', 'Def', 'Spd', 'Spc', 'Tot', 'KO'];
-								var headings = ['name', 'pokedex', 'type', 'hp', 'attack', 'defense', 'speed', 'special', 'total', 'ko'];
-								if(storage.gen == 2)
+								if(cached)
 								{
-									labels = ['Name', '№', 'Type', 'HP', 'Att', 'Def', 'Spd', 'Sp.A', 'Sp.D', 'Tot', 'KO'];
-									headings = ['name', 'johtodex', 'type', 'hp', 'attack', 'defense', 'special_attack', 'special_defense', 'speed', 'total', 'ko'];
+									var labels = ['Name', '№', 'Type', 'HP', 'Att', 'Def', 'Spd', 'Spc', 'Tot', 'KO'];
+									var headings = ['name', 'pokedex', 'type', 'hp', 'attack', 'defense', 'speed', 'special', 'total', 'ko'];
+
+									if(storage.gen == 2)
+									{
+										labels.splice(7, 4, 'Sp.A', 'Sp.D', 'Tot', 'KO');
+										headings.splice(1, 1, 'johtodex');
+										headings.splice(7, 4, 'special_attack', 'special_defense', 'total', 'ko');
+									}
+
+									for(i = 0; i < headings.length; i++)
+									{
+										var td = document.createElement('td');
+										td.setAttribute('onclick', "sortBy('" + headings[i] + "')");
+										if(storage.sortby === headings[i])
+											td.setAttribute('class', 'underline');
+										var text = document.createTextNode(labels[i]);
+										td.appendChild(text);
+										$('TRACKER_HEADINGS').appendChild(td);
+									}
 								}
-									
-								for(i = 0; i < headings.length; i++)
-								{
-									var td = document.createElement('td');
-									td.setAttribute('onclick', "sortBy('" + headings[i] + "')");
-									if(storage.sortby === headings[i])
-										td.setAttribute('class', 'underline');
-									var text = document.createTextNode(labels[i]);
-									td.appendChild(text);
-									$('TRACKER_HEADINGS').appendChild(td);
-								}
-							}
 							</script>
 						</tr>
 						<script>
 							var tr;
+
 							for(j = 0; j < storage.in_zone.length; j++)
 							{
 								var row = parseInt(storage.in_zone[j]) - 1;
 								row = tables.pokemon[row];
 								var ko = storage.knockouts[row.pokedex - 1];
 								var src = String(row.pokedex);
+
 								if(src.length < 2)
 									src = "00" + src;
 								else if(src.length < 3)
 									src = "0" + src;
+
 								src = 'assets/pokemon/' + src + "MS.png";
-								
 								var img = document.createElement('img');
 								img.setAttribute('src', src);
-								
 								tr = document.createElement('tr');
-								
 								var td = document.createElement('td');
-								td.appendChild(img);
 								var text = document.createTextNode(row.name);
+								td.appendChild(img);
 								td.appendChild(text);
 								tr.appendChild(td);
-								
 								var index = row.pokedex;
+
 								if(storage.gen == 2)
 									index = row.johtodex;
-									
+
 								td = document.createElement('td');
 								text = document.createTextNode(index);
 								td.appendChild(text);
 								tr.appendChild(td);
-								
-								
 								td = document.createElement('td');
 								var type = row.type.split('-');
+
 								for(i = 0; i < type.length; i++)
 								{
-									src = "assets/types/" + type[i] + ".png";
+									src = "assets/types/" + type[i].toLowerCase() + ".png";
 									var typeImg = document.createElement('img');
 									typeImg.setAttribute('class', 'types');
 									typeImg.setAttribute('src', src);
 									td.appendChild(typeImg);
 								}
-								
+
 								tr.appendChild(td);
-								
 								var headings = ['hp', 'attack', 'defense', 'speed', 'special', 'total'];
+
 								if(storage.gen == 2)
 								{
-									headings = ['hp', 'attack', 'defense', 'special_attack', 'special_defense', 'speed', 'total'];
+									headings.splice(4, 3, 'special_attack', 'special_defense', 'total');
 								}
-								
+
 								for(i = 0; i < headings.length; i++)
 								{
 									td = document.createElement('td');
@@ -962,12 +908,13 @@
 									td.appendChild(text);
 									tr.appendChild(td);
 								}
-								
+
 								td = document.createElement('td');
 								var div = document.createElement('div');
 								var id = row.pokedex;
-								div.setAttribute('id', 'KO' + id);
 								var input = document.createElement('input');
+								var style = document.createElement('style');
+								div.setAttribute('id', 'KO' + id);
 								input.setAttribute('name', 'k' + id);
 								input.setAttribute('id', 'k' + id);
 								input.setAttribute('value', ko);
@@ -975,43 +922,19 @@
 								input.setAttribute('step', 'any');
 								input.setAttribute('max', '999');
 								input.setAttribute('min', '0');
-								
 								div.appendChild(input);
-								var style = document.createElement('style');
 								style.innerHTML = "input#k" + id + ":hover::after{content:'s'; width: 20px;}";
 								div.appendChild(style);
 								td.appendChild(div);
 								tr.appendChild(td);
-								
 								$('TRACKER').appendChild(tr);
 							}
 
 							localStorage.setItem('storage', JSON.stringify(storage));
 						</script>
 					</table>
-				</div>			
-			</form>		
-		</div>
-		<div id="GUIDE">
-			<h3>License</h3><br/>
-			<span class="italic">DV Calculator 2.0B -- 05/09/2018</span><br/>
-			<p>
-				<b>Title:</b> Pokemon DV Calculator<br/>
-				<b>Description:</b> A tool for calculating individual values (DVs) in the first and second generation Pokemon games.<br/>
-				<b>Copyright</b> (&copy;) 2018 Andrew Noble
-			</p>
-			<p>
-				This program is free software: you can redistribute it and/or modify
-				it under the terms of the GNU General Public License as published by
-				the Free Software Foundation, either version 3 of the License, or
-				(at your option) any later version.
-			</p>
-			<p>
-				This program is distributed in the hope that it will be useful,
-				but WITHOUT ANY WARRANTY; without even the implied warranty of
-				MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
-				GNU General Public License for more details.
-			</p>
+				</div>
+			</form>
 		</div>
 	</body>
 </html>
