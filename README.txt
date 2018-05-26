@@ -18,6 +18,7 @@ GNU General Public License for more details.
 2018-05-26
 
 DV Calculator by Andrew Noble
+Supports Firefox and Chrome. Works best in Firefox.
 
 Documentation will be added soon.
 
