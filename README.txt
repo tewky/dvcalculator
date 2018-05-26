@@ -15,20 +15,12 @@ GNU General Public License for more details.
 
 **********************
 
-2018-05-09
+2018-05-26
 
-DV Calculator 2.0B
-THIS IS A BETA VERSION
+DV Calculator by Andrew Noble
 
-THE CODE IS NOT COMMENTED, OPTIMIZED, OR STANDARDS-COMPLIANT.
-After beta testing is complete the code will be refactored.
-If you want to extend this application please wait until the beta test is complete!
+Documentation will be added soon.
 
-This application began as an excel spreadsheet and has been rebuilt on different platforms 
-three times before this version, so the program structure is slightly disorganized.
-
-Please report bugs that you find!
-
-Thanks for using the DV Calculator.
+Thanks for using the DV Calculator!
 
 **********************

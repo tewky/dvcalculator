@@ -71,7 +71,7 @@ function sortBy(column)
 		storage.global.sortorder = 1;
 
 	storage.global.sortby = column;
-	refresh();
+	saveAll();
 }
 
 // Refresh the application.
@@ -190,13 +190,9 @@ function populateTracker(id)
 	}
 
 	if(storage.global.sortby == 'ko')
-	{
 		in_zone.sort(orderByKO)
-	}
 	else
-	{
 		in_zone.sort(orderByColumn);
-	}
 
 	storage.in_zone = in_zone;
 }
@@ -231,7 +227,7 @@ function getFormInput()
 function saveAll()
 {
 	getFormInput();
-	storage.input.save = true;
+	storage.save = true;
 	refresh();
 }
 
@@ -402,23 +398,19 @@ function calculateHiddenPower()
 	storage.hiddenpower.type = types[typedec];
 }
 
-/* Initialize the calculator.
-   Globals must be set before calling this. */
+//Initialize the calculator. Globals must be set before calling this
 function initialize(gen)
 {
-
 	storage.records = new Object();
 	storage.input = new Object();
 	storage.in_zone = [];
 	storage.displayData = new Object();
 	storage.display = new Object();
 	storage.current_pokemon = new Array();
-
 	storage.input.showstats = true;
 	storage.input.thumbs = false;
 	storage.lookup = [];
 	storage.initialized = true;
-
 
 	if(gen == 1)
 	{
@@ -436,14 +428,12 @@ function initialize(gen)
 
 	}
 
-
 	storage.modecalculated = false;
 	storage.attributes = [];
 	storage.counter = 1;
 	storage.calculate = false;
 	storage.evolve = false;
 	storage.estimation = false;
-	storage.filter = false;
 	storage.gen = gen;
 	storage.map = true;
 	storage.numtracked = 1;//the number of pokemon sharing experience
@@ -577,7 +567,7 @@ function pollInput()
 
 	var id = storage.current_pokemon[0];
 
-	if(isset(storage.input.current))//this only happens when it's already set... otherwise it still points to old id before reset
+	if(isset(storage.input.current))
 	{
 		id = storage.input.current;//set current pokemon
 	}
@@ -678,10 +668,9 @@ function pollInput()
 	}
 
 	storage.calculate = storage.input.calculate;
-	storage.filter = (isset(storage.input.filter)) ? true : false;
 	storage.maxexp = storage.input.maxexp;
 	storage.track = storage.input.track;
-	storage.save = (isset(storage.input.save)) ? true : false;
+	//storage.save = (isset(storage.input.save)) ? true : false;
 
 	if(isset(storage.input.type))
 	{
@@ -695,13 +684,9 @@ function getLength(countable)
 	var length = 0;
 
 	if(typeof countable == "object")
-	{
 		length = Object.keys(countable).length;
-	}
 	else if(Array.isArray(countable))
-	{
 		length = countable.length;
-	}
 
 	return length;
 }
@@ -774,11 +759,19 @@ function update()
 	}
 
 	if(level <= storage.global.minlevel || level > storage.global.maxlevel)
-	{
 		storage.calculate = false;//enforce bounds on level
+
+	id = storage.current_pokemon[0];//reuse of temp variable
+
+	storage.trackcount = storage.numtracked;
+
+	//if current pokemon is tracked, reduce numtracked count by 1 to avoid counting it twice
+	if(storage.numtracked >= 1)
+	{
+		if(isSaved(id) && storage.savedpokemon[id].track)
+			storage.trackcount -= 1;
 	}
 
-	//change k to i and some other concurrent execution will step on i  causing infinite loop
 	//update stat experience based on all rows displayed in tracker
 	for(k = 0; k < storage.global.numpokemon; k++)
 	{
@@ -788,26 +781,10 @@ function update()
 		{
 			var min = 0;
 			var abs_min = 0.15;//absolute minimum step size to prevent infinite division toward 0
-
 			var knockouts = Number.parseFloat(storage.input[id]);
 			storage.knockouts[k] = Number.parseFloat(storage.knockouts[k]);
 			var delta = knockouts - storage.knockouts[k];//Find diff. between input and stored value
-			id = storage.current_pokemon[0];//reuse of temp variable id
-
-			if(storage.numtracked >= 1)
-			{
-				if(isSaved(id) && storage.savedpokemon[id].track)
-				{
-					delta = delta / (storage.numtracked - 1);
-					min = 1 / (storage.numtracked - 1);
-				}
-				else
-				{
-					delta = delta / storage.numtracked;//change in KO / # in party
-					min = 1 / storage.numtracked;//Set minimum step size
-				}
-
-			}
+			min = 1 / storage.numtracked;//Set minimum step size
 
 			if(delta != 0 && Math.abs(delta) < min)
 			{
@@ -819,26 +796,21 @@ function update()
 			storage.knockouts[k] += delta;//Add delta to knockouts, round only here to preserve accuracy
 
 			if(storage.knockouts[k] < abs_min)//enforce absolute minimum total KO value
-			{
 				storage.knockouts[k] = 0;//otherwise it divides infinitely toward 0
-			}
 
 			//Loop through saved pokemon and update data
-			//This could be more efficient by only looping through tracked pokemon, refs. stored in another array
-
 			var keys = Object.keys(storage.savedpokemon);
+
 			for(j = 0; j < keys.length; j++)
 			{
 				var entry = storage.savedpokemon[keys[j]];
+
 				if(entry.track)
 				{
-					id = entry.pokemon[0];
 					storage.savedpokemon[keys[j]].knockouts[k] += delta;
-					if(storage.savedpokemon[keys[j]].knockouts[k] < abs_min)
-					{
-						storage.savedpokemon[keys[j]].knockouts[k] = 0;
-					}
 
+					if(storage.savedpokemon[keys[j]].knockouts[k] < abs_min)
+						storage.savedpokemon[keys[j]].knockouts[k] = 0;
 				}
 			}
 		}
@@ -871,15 +843,17 @@ function update()
 	{
 		var knockoutKeys = Object.keys(storage.knockouts);
 		var all_pokemon = getAllPokemon();
-
 		storage.stat_exp = createArray(storage.global.numstats, 0);
+
 		for(i = 0; i < all_pokemon.length; i++)
 		{
 			var pokemon = all_pokemon[i];
 			var ko = Number(storage.knockouts[knockoutKeys[i]]);
+
 			if(ko > 0)
 			{
 				var keys = Object.keys(pokemon);
+
 				for(j = 0; j < storage.global.numstats; j++)
 				{
 					storage.stat_exp[j] += Math.floor(Number(pokemon[keys[j + storage.global.base_stats_col]]) * ko);
@@ -912,24 +886,15 @@ function update()
 				for(i = 0; i < storage.global.numstats; i++)
 				{
 					var x = i;
-					//Find stat experience from vitamins used
-					/*if(storage.gen == 2 && i == 4)
-					{
-						x = 3; no longer needed - two special vitamins combined into one
-					}*/
 
 					if(storage.vitamins[x] > 0)
 						storage.stat_exp[i] = storage.global.vitaminMax - storage.vitamins[x] * storage.global.vitaminStep;
 
 					//Test bounds
 					if(storage.stat_exp[i] < 0)
-					{
 						storage.stat_exp[i] = 0;
-					}
 					else if(storage.stat_exp[i] > storage.global.maxStatExp)
-					{
 						storage.stat_exp[i] = storage.global.maxStatExp;
-					}
 				}
 			}
 		}
@@ -940,7 +905,6 @@ function update()
 		}
 
 		var valid = true;//assume valid input before validation
-
 		//Get pokemon's attributes in array form, matching a row in the db's pokemon table
 		storage.attributes = getPokemonByName(storage.current_pokemon[1]);
 		storage.types = storage.attributes.type;
@@ -955,25 +919,21 @@ function update()
 			dv[1] = -1;
 			valid = false;
 		}
-		//find a way to eliminate this duplicate code
+
 		if(valid)
 		{
 			storage.outofrange = false;
 			//enforce bounds on DV range
 			if(dv[0] < 0)
-			{
 				dv[0] = 0;
-			}
+
 			if(dv[1] > 15)
-			{
 				dv[1] = 15;
-			}
 		}
 		else//set outofrange flag
 		{
 			storage.outofrange = true;
 		}
-
 
 		var dvrange = [];
 		var index = 0;
@@ -1001,13 +961,10 @@ function update()
 				storage.outofrange = false;
 				//enforce bounds on DV range
 				if(dv[0] < 0)
-				{
 					dv[0] = 0;
-				}
+
 				if(dv[1] > 15)
-				{
 					dv[1] = 15;
-				}
 			}
 			else//set outofrange flag
 			{
@@ -1025,6 +982,7 @@ function update()
 		if(valid)
 		{
 			storage.modecalculated = true;
+
 			if(!array_key_exists(storage.stats.lvl, storage.records) || storage.overwrite)
 			{
 				//write record for this level with dv ranges
@@ -1051,14 +1009,10 @@ function update()
 					for(i = 0; i < getLength(row); i++)//for each stat in record
 					{
 						if(row[i][0] > min[i])
-						{
 							min[i] = row[i][0];
-						}
 
 						if(row[i][1] < max[i])
-						{
 							max[i] = row[i][1];
-						}
 					}
 				}
 
@@ -1127,22 +1081,16 @@ function update()
 				{
 					//reverse calculate HP DV if other 4 are known with 100% accuracy
 					var hp = 0;
+
 					if(storage.mode[1] % 2 == 1)
-					{
 						hp += 8;
-					}
 					if(storage.mode[2] % 2 == 1)
-					{
 						hp += 4;
-					}
 					if(storage.mode[3] % 2 == 1)
-					{
 						hp += 2;
-					}
 					if(storage.mode[4] % 2 == 1)
-					{
 						hp += 1;
-					}
+
 					storage.mode[0] = hp;
 					storage.accuracy[0] = 2;
 				}
@@ -1157,57 +1105,40 @@ function update()
 					for(i = 1; i < storage.global.numstats; i++)
 					{
 						if(storage.accuracy[i] == 2)
-						{
 							count++;
-						}
 						else if(storage.accuracy[i] == 1 || storage.accuracy[i] == 0)
-						{
 							reverse = i;
-						}
 					}
 					if(count == 3)
 					{
 						if(storage.mode[1] % 2 == 1 && reverse != 1)
-						{
 							hp -= 8;
-						}
 						if(storage.mode[2] % 2 == 1 && reverse != 2)
-						{
 							hp -= 4;
-						}
 						if(storage.mode[3] % 2 == 1 && reverse != 3)
-						{
 							hp -= 2;
-						}
 						if(storage.mode[4] % 2 == 1 && reverse != 4)
-						{
 							hp -= 1;
-						}
+
 						switch(reverse)
 						{
 							case 1:
 								if(hp == 8)
 								{
 									if(min[1] % 2 == 1)
-									{
 										storage.mode[1] = min[1];
-									}
 									else
-									{
 										storage.mode[1] = max[1];
-									}
+
 									storage.accuracy[1] = 2;
 								}
 								else if(hp == 0)
 								{
 									if(min[1] % 2 == 0)
-									{
 										storage.mode[1] = min[1];
-									}
 									else
-									{
 										storage.mode[1] = max[1];
-									}
+
 									storage.accuracy[1] = 2;
 								}
 								break;
@@ -1215,25 +1146,19 @@ function update()
 								if(hp == 4)
 								{
 									if(min[2] % 2 == 1)
-									{
 										storage.mode[2] = min[2];
-									}
 									else
-									{
 										storage.mode[2] = max[2];
-									}
+
 									storage.accuracy[2] = 2;
 								}
 								else if(hp == 0)
 								{
 									if(min[2] % 2 == 0)
-									{
 										storage.mode[2] = min[2];
-									}
 									else
-									{
 										storage.mode[2] = max[2];
-									}
+
 									storage.accuracy[2] = 2;
 								}
 								break;
@@ -1241,25 +1166,19 @@ function update()
 								if(hp == 2)
 								{
 									if(min[3] % 2 == 1)
-									{
 										storage.mode[3] = min[3];
-									}
 									else
-									{
 										storage.mode[3] = max[3];
-									}
+
 									storage.accuracy[3] = 2;
 								}
 								else if(hp == 0)
 								{
 									if(min[3] % 2 == 0)
-									{
 										storage.mode[3] = min[3];
-									}
 									else
-									{
 										storage.mode[3] = max[3];
-									}
+
 									storage.accuracy[3] = 2;
 								}
 								break;
@@ -1267,25 +1186,19 @@ function update()
 								if(hp == 1)
 								{
 									if(min[4] % 2 == 1)
-									{
 										storage.mode[4] = min[4];
-									}
 									else
-									{
 										storage.mode[4] = max[4];
-									}
+
 									storage.accuracy[4] = 2;
 								}
 								else if(hp == 0)
 								{
 									if(min[4] % 2 == 0)
-									{
 										storage.mode[4] = min[4];
-									}
 									else
-									{
 										storage.mode[4] = max[4];
-									}
+
 									storage.accuracy[4] = 2;
 								}
 								break;
@@ -1304,9 +1217,9 @@ function update()
 						storage.accuracy[4] = 2;
 					}
 
-					if(!storage.display.hiddenpower)//if already set to display hidden power don't calculate again
-					{										//in cases where clear() was called for a saved pokemon not all
-						calculateHiddenPower();      //required values for calculation will be initialized
+					if(!storage.display.hiddenpower)//if display hidden power already set don't calculate again
+					{																//in cases where clear() was called for a saved pokemon not all
+						calculateHiddenPower();       //required values for calculation will be initialized
 						storage.display.hiddenpower = true;
 					}
 				}
@@ -1475,6 +1388,7 @@ function update()
 		entry["vitamins"] = storage.vitamins;
 		entry["modecalculated"] = storage.modecalculated;
 		storage.savedpokemon[saveid] = entry;//write save entry to storage
+		storage.save = false;
 	}//end of save routine
 
 	//get a list of Pokemon that can be encountered in the current zone and store it for use in view
