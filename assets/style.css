@@ -1,7 +1,6 @@
-/*
-	Title: DV Calculator
-	Description: A tool to help with finding the DVs of Pokemon in generation 1 and 2 games.
-    Copyright (C) 2018  Andrew Noble
+/*  Title: DV Calculator
+		Description: A web browser application for calculating diversification values in generation 1 and 2 Pokemon games.
+    Copyright (C) 2018 Andrew Noble
 
     This program is free software: you can redistribute it and/or modify
     it under the terms of the GNU General Public License as published by
@@ -11,10 +10,9 @@
     This program is distributed in the hope that it will be useful,
     but WITHOUT ANY WARRANTY; without even the implied warranty of
     MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
-    GNU General Public License for more details.
-*/
+    GNU General Public License for more details. */
 
-* 
+*
 {
 	border: 0;
 	border-color: #839172;
@@ -29,16 +27,26 @@
 	vertical-align: top;
 }
 
-input
-{
-	background-color: #fff;	
-}
-
-body 
+body
 {
 	background-color: #FBFFF7;
 	font-size: 18px;
 	line-height: 1.25em;
+	margin: 0 0 20px;
+}
+
+button
+{
+	background-color: transparent;
+	margin: 0 3px;
+	float: left;
+	font-variant: small-caps;
+}
+
+button label
+{
+	position: relative;
+	top: -4px;
 }
 
 div.column
@@ -59,7 +67,7 @@ div.column > h4:first-child span
 	font-variant: small-caps;
 }
 
-h3 
+h3
 {
 	display: inline-block;
 	font-size: 1.3em;
@@ -78,7 +86,7 @@ h3.boxArt
 	font-variant: small-caps;
 }
 
-h4  
+h4
 {
 	background-color: #eaf2ce;
 	font-size: 1.1em;
@@ -86,11 +94,6 @@ h4
 	padding: 1px 8px 3px;
 	text-align: right;
 	border-width: 0 0 1px;
-}
-
-h5
-{
-	border-style: dotted;
 }
 
 hr
@@ -107,6 +110,7 @@ img.types
 
 input
 {
+	background-color: #fff;
 	border-style: dotted;
 	padding: 1px 8px 5px;
 }
@@ -123,6 +127,19 @@ input.button:hover
 	background-color: #F3F3F3;
 }
 
+input.button
+{
+	padding: 0 6px 2px;
+	font-size: 1.2em;
+	font-variant: small-caps;
+	box-shadow: inset black -1px -1px 2px;
+}
+
+input[type='checkbox']
+{
+	transform: scale(1.2);
+}
+
 label
 {
 	font-style: italic;
@@ -136,21 +153,18 @@ label[for="TRACK"]
 	top: 10px;
 }
 
+label[for='MAX_EXP']
+{
+	font-variant: small-caps;
+	margin: 11px 0 0 15px;
+	display: inline-block;
+}
+
 select
 {
 	border-width: 0;
 	margin: 3px 0 0 5px;
 	padding: 2px 5px;
-}
-
-td
-{
-	padding: 4px;
-}
-
-tr.heading td:hover
-{
-	background-color: #F3F3F3;
 }
 
 ul
@@ -170,23 +184,47 @@ li
 	text-indent: -17px;
 }
 
+sup
+{
+	position: relative;
+	top: -0.2em;
+	font-size: 0.7em;
+}
+
+td
+{
+	padding: 4px;
+}
+
+tr.heading td:hover
+{
+	background-color: #F3F3F3;
+}
+
+td.controls
+{
+	border-width: 1px 0 0;
+	border-style: solid;
+}
+
+td.controls input.button
+{
+	margin: 1px 2px 0px;
+	padding: 4px 8px 6px;
+	float: left;
+	border-radius: 1px;
+}
+
+tr.record:last-of-type
+{
+	border-width: 0 0 0;
+}
+
 #BASE
 {
 	float: right;
 	position: relative;
 	top: -3px;
-}
-
-.blue
-{
- color: #00A0DB;
-}
-
-#BLUE
-{
-	/*color: #00A0DB;*/
-	background-image: url("blue.png");
-	opacity: 25%;
 }
 
 #CONTAINER
@@ -221,7 +259,6 @@ li
 	font-weight: bold;
 	font-variant: small-caps;
 	text-transform: lowercase;
-	
 }
 
 #DV tr:first-child td
@@ -232,13 +269,6 @@ li
 #EVOLVE
 {
 	margin: 3px 7px 0 0;
-}
-
-sup
-{
-	position: relative;
-	top: -0.2em;
-	font-size: 0.7em;
 }
 
 #POKEMON tr:first-child td button, #POKEMON tr:first-child td input
@@ -271,29 +301,7 @@ sup
 
 #REVERT
 {
-	background-image: url('assets/evolve_down.png');
 	margin: 3px 2px 0 0;
-}
-
-#GUIDE
-{
-	display: block;
-	font-size: 12pt;
-	margin: 15px auto;
-	width: 65%;
-}
-
-#GUIDE p
-{
-	margin: 5px 0 2px 17px;
-	padding: 0 5px;
-	text-align: left;
-}
-
-#GUIDE li
-{
-	padding: 0 5px;
-	text-align: left;
 }
 
 #HEADER
@@ -309,13 +317,33 @@ sup
 	margin: 3px;
 }
 
+#HEADER input[type='submit']:hover
+{
+	background-color: #d41717;
+	color: white;
+}
+
+#HEADER input.floatRight:hover
+{
+	background-color: #d41717;
+	color: white;
+}
+
 #DUMMY
 {
 	visibility: hidden;
 }
 
+#MAP_CONTAINER
+{
+	position: relative;
+	box-sizing: content-box;
+	width: 66%;
+	margin: 3px auto 4px;
+}
+
 #MAP
-{	
+{
 	position: relative;
 	width: 100%;
 	box-sizing: border-box;
@@ -334,38 +362,7 @@ sup
 	left: 4px;
 }
 
-label[for='MAX_EXP']
-{
-	font-variant: small-caps;
-	margin: 11px 0 0 15px;
-	display: inline-block;
-}
-
-#MINUS
-{
-	float: left;
-}
-
-#MINUS, #PLUS
-{
-	opacity: 0.5;
-	margin: 8px 0 0;
-}
-
-#PLUS
-{
-	float: right;
-}
-
-.avatar
-{
-	height: 125%;
-	position: relative;
-	top: -5px;
-	
-}
-
-#CONFIRM_LABEL
+#CONFIRM_RESET
 {
 	display: inline-block;
 	margin-top: -5px;
@@ -373,19 +370,27 @@ label[for='MAX_EXP']
 
 #POKEDEX
 {
-	float: left;
-	display: inline-block;
 	position: relative;
-	left: -50px;
-	top: 11px;
-	font-size: 1.3em;
+	left: -5px;
+	top: 0;
+	font-size: 1.1em;
 }
 
-#PARTY 
+#SPECIES
+{
+	position: absolute;
+	font-variant: normal;
+	left: 20px;
+	top: 20px;
+	font-size: 0.7em;
+}
+
+#PARTY
 {
 	position: relative;
 	border-width: 1px 0 0;
 }
+
 #PARTY input
 {
 	float: right;
@@ -423,14 +428,25 @@ label[for='MAX_EXP']
 	padding: 0 1px;
 }
 
+#SELECT
+{
+	position: relative;
+}
+
 #SELECT img
 {
 	margin-top: 8px;
 }
 
+#SELECT span
+{
+	float: left;
+	display: inline-block;
+}
+
 #SHINY
 {
-	margin: 0 5px 0 0;
+	margin: 4px 0 0 !important;
 }
 
 /*reset prompt*/
@@ -439,7 +455,7 @@ label[for='MAX_EXP']
 	display: inline-block;
 	float: right;
 	font-variant: small-caps;
-	margin: 9px 3px 0;
+	margin: 7px 3px 0;
 }
 
 #PROMPT input
@@ -455,10 +471,8 @@ label[for='MAX_EXP']
 
 #ERROR
 {
-	/*background: -webkit-linear-gradient(red, yellow);  For Safari 5.1 to 6.0
-    background: -o-linear-gradient(red, yellow);  For Opera 11.1 to 12.0 
-    background: -moz-linear-gradient(red, yellow);  For Firefox 3.6 to 15 */
-	background: linear-gradient(90deg, #d41717 -50%, #FCFCF0 20%, #FCFCF0 80%, #d41717 150%);
+	background: linear-gradient(90deg, #d41717 -50%, #FCFCF0 20%
+		, #FCFCF0 80%, #d41717 150%);
 	border-radius: 2px;
 	font-variant: small-caps;
 	font-size: 1.2em;
@@ -488,30 +502,6 @@ label[for='MAX_EXP']
 	border-width: 1px 0 0;
 }
 
-.red 
-{
-	color: #EF4934;
-	text-shadow: 1px 1px 1px black;
-}
-
-#RED
-{
-	background-image: url("red.png");
-	text-align: bottom;
-}
-
-#HEADER input[type='submit']:hover
-{
-	background-color: #d41717;
-	color: white;
-}
-
-#HEADER input.floatRight:hover
-{
-	background-color: #d41717;
-	color: white;
-}
-
 #SAVE
 {
 	background-image: url("save.png");
@@ -530,7 +520,6 @@ label[for='MAX_EXP']
 
 #ZONE input
 {
-	/*float: right;*/
 	margin: 0 8px 0 0;
 	padding: 0 7px 3px;
 	background-color: #f7f7f7;
@@ -538,40 +527,16 @@ label[for='MAX_EXP']
 	border-width: 1px;
 	border-style: solid;
 	border-radius: 1px;
-	
 }
 
-#TRACKER_CONTROLS 
+#TRACKER_CONTROLS
 {
 	width: 100%;
-	
 }
 
 #TRACKER_CONTROLS > input:first-of-type
 {
 	margin: 4px;
-}
-
-input.button 
-{
-	padding: 0 6px 2px;
-	font-size: 1.2em;
-	font-variant: small-caps;
-	box-shadow: inset black -1px -1px 2px;
-}
-
-td.controls
-{
-	border-width: 1px 0 0;
-	border-style: solid;
-}
-
-td.controls input.button
-{
-	margin: 1px 2px 0px;
-	padding: 4px 8px 6px;
-	float: left;
-	border-radius: 1px;
 }
 
 #SAVE_ID
@@ -580,15 +545,6 @@ td.controls input.button
 	border-width: 1px;
 	padding: 5px 0;
 	margin: 4px 0 0;
-}
-
-.framed
-{
-	box-shadow: #839172 0 0 3px;
-	border-width: 1px;
-	border-radius: 8px;
-	display: inline-block;
-	overflow: hidden;
 }
 
 #CONTROLS
@@ -631,14 +587,9 @@ td.controls input.button
 	margin: 8px 0 0 7px;
 }
 
-input[type='checkbox']
-{
-	transform: scale(1.2);
-}
-
 #POKEMON_CONTROLS button
 {
-	margin: 12px 3px 0 7px;
+	margin: 12px 3px 0;
 	transform: scale(1.15);
 }
 
@@ -649,14 +600,12 @@ input[type='checkbox']
 
 #TRACK
 {
-	margin: 16px 3px 0 0;
+	margin: 15px 8px 0;
 }
-
 
 #TRACK label
 {
 	padding: 5px 0 0;
-
 }
 
 #TRACKER img
@@ -666,7 +615,7 @@ input[type='checkbox']
 	left: -1px;
 }
 
-#TRACKER img.types 
+#TRACKER img.types
 {
 	float: left;
 }
@@ -710,17 +659,17 @@ input[type='checkbox']
 {
 	margin: 2px 0 10px;
 }
-	
+
 #VETERAN input
 {
 	width: 50px;
 	margin: 0 2%;
 }
 
-.yellow
+#BLUE
 {
-	color: #F3ED7B;
-	text-shadow: 1px 1px 2px black;
+	background-image: url("blue.png");
+	opacity: 25%;
 }
 
 #YELLOW
@@ -729,6 +678,12 @@ input[type='checkbox']
 	left: -1px;
 	color: #F3ED7B;
 	background-image: url("yellow.png");
+}
+
+#RED
+{
+	background-image: url("red.png");
+	text-align: bottom;
 }
 
 #CRYSTAL
@@ -743,7 +698,6 @@ input[type='checkbox']
 	background-image: url("silver.png");
 }
 
-
 #GOLD
 {
 	color: #b6a672;
@@ -757,18 +711,38 @@ input[type='checkbox']
 	width: 100%;
 }
 
-button
+.avatar
 {
-	background-color: transparent;
-	margin: 0 3px;
-	float: left;
-	font-variant: small-caps;
+	height: 125%;
+	position: relative;
+	top: -5px;
 }
 
-button label
+.bold
 {
-	position: relative;
-	top: -4px;
+	font-weight: bold;
+}
+
+.red
+{
+	color: #EF4934;
+	text-shadow: 1px 1px 1px black;
+}
+
+.blue
+{
+ color: #00A0DB;
+}
+
+.yellow
+{
+	color: #F3ED7B;
+	text-shadow: 1px 1px 2px black;
+}
+
+.gray
+{
+	color: #666666;
 }
 
 .base {
@@ -776,19 +750,19 @@ button label
 	margin: 0 5px;
 }
 
-.flipVertical {
-	-webkit-transform: scaleY(-1);
-    transform: scaleY(-1);
-}
-
 .bottomborder
 {
 	border-width: 0 0 1px;
 }
 
-.floatRight 
+.floatRight
 {
 	float: right;
+}
+
+.flipVertical {
+	-webkit-transform: scaleY(-1);
+  transform: scaleY(-1);
 }
 
 .floatLeft
@@ -797,29 +771,20 @@ button label
 	float: left;
 }
 
-.gray
+.framed
 {
-	color: #666666;
-}
-
-tr.record:last-of-type
-{
-	border-width: 0 0 0;
+	box-shadow: #839172 0 0 3px;
+	border-width: 1px;
+	border-radius: 8px;
+	display: inline-block;
+	overflow: hidden;
 }
 
 .highlighted
 {
+	appearance: none;
 	font-size: 0.9em;
-	background-color: #e0f4ff;
-}
-
-
-#MAP_CONTAINER
-{
-	position: relative;
-	box-sizing: content-box;
-	width: 66%;
-	margin: 3px auto 4px;
+	background-color: #e0f4ff !important;
 }
 
 .mapCaption
@@ -843,29 +808,27 @@ tr.record:last-of-type
 	z-index: 1;
 }
 
-
 .clickarea:hover
 {
 	visibility: visible;
 	background-size: contain;
 	background-repeat: no-repeat;
 	background-image: url('maps/player_target.png');
-
 }
 
-.index 
+.index
 {
 	font-variant: small-caps;
-}
-
-.bold
-{
-	font-weight: bold;
 }
 
 .italic
 {
 	font-style: italic;
+}
+
+.right
+{
+	text-align: right;
 }
 
 .saved
@@ -874,7 +837,7 @@ tr.record:last-of-type
 	font-style: italic;
 }
 
-.small 
+.small
 {
 	font-size: 12pt;
 }
@@ -892,19 +855,9 @@ tr.record:last-of-type
 	background-color: #F3F3F3;
 }
 
-.right
-{
-	text-align: right;
-}
-
 .shaded
 {
 	background-color: #c2c2c2;
-}
-
-.shadedLight
-{
-	background-color: #eaf2ce;	
 }
 
 .thumb
@@ -913,12 +866,12 @@ tr.record:last-of-type
 	margin: -4px 0;
 }
 
-.title td 
+.title td
 {
 	font-variant: small-caps;
 }
 
-.title 
+.title
 {
 	font-weight: bold;
 }
