@@ -39,20 +39,16 @@
 			localStorage.setItem('tablesCached', 'false');
 			cached = false;
 		}
-		else
-			cached = true;
-
 		</script>
 		<div id="CONTAINER">
 			<form id="FORM" method="POST">
 				<div id="HEADER">
 					<!--if user presses enter on page focus this blocks an unwanted submit action-->
 					<input id='DUMMY' name='dummy' type='button' action='#' value=''/>
-					<input id='VETERAN_BUTTON' class='floatRight' type='button' name='veteran' value='veteran' onclick='veteranMode()'/>
 					<script>
+					//add change generation button to header
 					var button = document.createElement('input');
 					button.setAttribute('type', 'button');
-					button.setAttribute('class', 'floatRight');
 					button.setAttribute('name', 'gen2');
 					button.setAttribute('onclick', 'changeGen()');
 					var value = 'gen 2';
@@ -92,7 +88,7 @@
 					}
 					</script>
 					<h3>DV Calculator</h3>
-					<input class='floatRight' name='reset' type='button' value='reset' onclick='resetCalc()'/>
+					<input name='reset' type='button' value='reset' onclick='resetCalc()'/>
 					<div id='PROMPT'>
 						<input id='CONFIRM_RESET' name='confirm' type='checkbox'/>
 					</div>
@@ -141,9 +137,9 @@
 								if(current == pokemon.pokemon[0])
 								{
 									option.setAttribute('selected', 'selected');
+									select.setAttribute('class', 'highlighted');
 								}
 
-								option.setAttribute('class', 'highlighted');
 								option.setAttribute('value', pokemon.pokemon[0]);
 								option.appendChild(text);
 								select.appendChild(option);
@@ -446,24 +442,28 @@
 							</script>
 						</tr>
 						<tr id='CONTROLS'>
-							<td id="POKEMON_CONTROLS" class='controls' colspan="7">
+							<td id="POKEMON_CONTROLS" colspan="7">
 								<input type='button' id='CALCULATE' class='button' name='calculate' value='Calculate' onclick='calculateDV()'/>
 								<button type='button' id='LEVELUP' name='levelup' onclick='levelUp()'><img src='assets/candy.png'/></button>
 								<button type='button' id='REVERT' name='revert' onclick='devolvePokemon()'><img src='assets/devolve.png'/></button>
 								<button type='button' id='EVOLVE' name='evolve' onclick='evolvePokemon()'><img src='assets/evolve.png'/></button>
-								<input type='button' id='SAVE' class='button' name='save' value='Save' onclick='saveAll()'/>
 
 								<script>
 								if(cached)
 								{
+									var label = document.createElement('label');
+									label.setAttribute('for', 'TRACK');
+									label.appendChild(document.createTextNode('Share'));
 									var track = document.createElement('input');
 									track.setAttribute('type', 'checkbox');
 									track.setAttribute('id', 'TRACK');
 									track.setAttribute('name', 'track');
+									track.setAttribute('onclick', 'saveAll()');
 
 									if(storage.track == true)
 										track.setAttribute('checked', 'checked');
 
+									$('POKEMON_CONTROLS').appendChild(label);
 									$('POKEMON_CONTROLS').appendChild(track);
 									var attributes = storage.attributes;
 									var src;
@@ -599,7 +599,9 @@
 				</div>
 				<div class='column'>
 					<h4 id='ZONE_CONTROLS'>
-						<span>Zone</span>
+						<span>Tracker</span>
+						<input class='smallButton' type='button' name='basestats' value='Stats' onclick='baseStats()'/>
+						<input class='smallButton' type='button' name='veteran' value='Veteran' onclick='veteranMode()'/>
 						<script>
 						if(cached)
 						{
@@ -643,7 +645,6 @@
 										var coords = tables.coordinates;
 										var coordIndex = 0;
 
-
 										for(i = 0; i < coords.length; i++)
 										{
 											var name = coords[i].name;
@@ -665,19 +666,22 @@
 										  var style = document.createElement('style');
 											style.innerHTML = 'div#' + name + ':hover::after { content: \"' + caption + '\"; \
 												background-color: #ebebeb; float: left; box-shadow: inset #575757 -1px -1px 5px; border-radius: 3px; \
-												position: relative; left: -50px; top: -30px; width: 150px; padding: 3px;}';
+												position: relative; left: -50px; top: -30px; width: 150px; padding: 3px; z-index: 1;}';
 											$('MAP_CONTAINER').appendChild(style);
 										}
 
 										img = document.createElement('img');
 										img.setAttribute('src', 'assets/player.png');
 										img.setAttribute('id', 'PLAYER');
+										var leftMargin = '1.2%';
+										var topMargin = '0.75%';
 										style = document.createElement('style');
 										style.innerHTML = 'img#PLAYER {position: absolute; left: ' + coords[coordIndex].rel_x
 											+ '%; top: ' + coords[coordIndex].rel_y + '%;  \
-											margin: 2px 0 0 4px;}';
+											margin: ' + topMargin + ' 0 0 ' + leftMargin + '; z-index: 0;}';
 										$('MAP_CONTAINER').appendChild(style);
 										$('MAP_CONTAINER').appendChild(img);
+
 									}
 									</script>
 								</div>
@@ -712,7 +716,8 @@
 
 									var div = document.createElement('div');
 									div.setAttribute('id', 'VITAMIN_LABELS');
-									var vitaminLabels = ['HP Up', 'Protein', 'Iron', 'Carbos', 'Calcium'];
+									var vitaminLabels = ['HP Up', 'Prot', 'Iron', 'Carb', 'Calc'];
+									var names = ['vithp', 'vitatt', 'vitdef', 'vitspd', 'vitspc'];
 
 									for(i = 0; i < vitaminLabels.length; i++)
 									{
@@ -726,7 +731,6 @@
 									$('TRACKER_CONTROLS').appendChild(div);
 									div = document.createElement('div');
 									div.setAttribute('id', 'VETERAN');
-									var names = ['vithp', 'vitatt', 'vitdef', 'vitspd', 'vitspc'];
 
 									for(i = 0; i < names.length; i++)
 									{
@@ -735,7 +739,7 @@
 										input.setAttribute('type', 'number');
 										input.setAttribute('maxlength', '2');
 										input.setAttribute('min', '0');
-										input.setAttribute('max', '10');
+										input.setAttribute('max', '9');
 										input.setAttribute('value', storage.vitamins[i]);
 										div.appendChild(input);
 									}
@@ -815,7 +819,9 @@
 
 								var save = document.createElement('input');
 								save.setAttribute('type', 'button');
-								save.setAttribute('name', 'save_tracker');
+								save.setAttribute('name', 'save');
+								save.setAttribute('id', 'SAVE');
+								save.setAttribute('class', 'button');
 								save.setAttribute('onclick', 'saveAll()');
 								save.setAttribute('value', 'Save');
 								td.appendChild(save);
@@ -831,15 +837,22 @@
 							{
 								var labels = ['Name', '№', 'Type', 'HP', 'Att', 'Def', 'Spd', 'Spc', 'Tot', 'KO'];
 								var headings = ['name', 'pokedex', 'type', 'hp', 'attack', 'defense', 'speed', 'special', 'total', 'ko'];
+								var labelsToRemove = 6;
 
 								if(storage.gen == 2)
 								{
+									labelsToRemove = 7;
 									labels.splice(7, 4, 'Sp.A', 'Sp.D', 'Tot', 'KO');
-									headings.splice(1, 1, 'johtodex');
+									//headings.splice(1, 1, 'johtodex');
 									headings.splice(7, 4, 'special_attack', 'special_defense', 'total', 'ko');
 								}
 
-								for(i = 0; i < headings.length; i++)
+								if(!storage.display.basestats)
+								{
+									labels.splice(3, labelsToRemove);
+								}
+
+								for(i = 0; i < labels.length; i++)
 								{
 									var td = document.createElement('td');
 									td.setAttribute('onclick', "sortBy('" + headings[i] + "')");
@@ -880,12 +893,19 @@
 							tr.appendChild(td);
 							var index = row.pokedex;
 
-							if(storage.gen == 2)
-								index = row.johtodex;
-
 							td = document.createElement('td');
 							text = document.createTextNode(index);
 							td.appendChild(text);
+
+							if(storage.gen == 2)
+							{
+								var sub = document.createElement('sub');
+								text = document.createTextNode('/' + row.johtodex);
+								sub.appendChild(text);
+								td.appendChild(sub);
+								td.style.setProperty('text-align', 'left');
+							}
+
 							tr.appendChild(td);
 							td = document.createElement('td');
 							var type = row.type.split('-');
@@ -905,30 +925,30 @@
 							if(storage.gen == 2)
 								headings.splice(4, 3, 'special_attack', 'special_defense', 'total');
 
-							for(i = 0; i < headings.length; i++)
+							if(storage.display.basestats)
 							{
-								td = document.createElement('td');
-								text = document.createTextNode(row[headings[i]]);
-								td.appendChild(text);
-								tr.appendChild(td);
+								for(i = 0; i < headings.length; i++)
+								{
+									td = document.createElement('td');
+									text = document.createTextNode(row[headings[i]]);
+									td.appendChild(text);
+									tr.appendChild(td);
+								}
 							}
 
 							td = document.createElement('td');
 							var div = document.createElement('div');
 							var id = row.pokedex;
 							var input = document.createElement('input');
-							var style = document.createElement('style');
 							div.setAttribute('id', 'KO' + id);
 							input.setAttribute('name', 'k' + id);
 							input.setAttribute('id', 'k' + id);
 							input.setAttribute('value', ko);
 							input.setAttribute('type', 'number');
-							input.setAttribute('step', (1 / storage.trackcount).toFixed(2));
+							input.setAttribute('step', storage.kostep);
 							input.setAttribute('max', '999');
 							input.setAttribute('min', '0');
 							div.appendChild(input);
-							style.innerHTML = "input#k" + id + ":hover::after{content:'s'; width: 20px;}";
-							div.appendChild(style);
 							td.appendChild(div);
 							tr.appendChild(td);
 							$('TRACKER').appendChild(tr);

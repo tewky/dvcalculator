@@ -110,11 +110,10 @@ function resetCalc()
 	{
 		if(!storage.confirmLabel)
 		{
-			var span = document.createElement('span');
-			span.setAttribute('id', 'CONFIRM_LABEL');
+			var label = document.createElement('label');
 			var text = document.createTextNode("Confirm: ");
-			span.appendChild(text);
-			$('PROMPT').insertBefore(span, $('CONFIRM_RESET'));
+			label.appendChild(text);
+			$('PROMPT').insertBefore(label, $('CONFIRM_RESET'));
 		}
 
 		storage.confirmLabel = true;
@@ -201,6 +200,13 @@ function populateTracker(id)
 function veteranMode()
 {
 	storage.veteran = (!storage.veteran) ? true : false;
+	saveAll();
+}
+
+// Show base stats in tracker
+function baseStats()
+{
+	storage.display.basestats = (storage.display.basestats) ? false : true;
 	saveAll();
 }
 
@@ -393,7 +399,6 @@ function calculateHiddenPower()
 	var b = (+storage.mode[1]).toString(2);
 	var typebin = a[2] + a[3] + b[2] + b[3];
 	var typedec = parseInt(typebin, 2);
-
 	storage.hiddenpower.damage = Math.floor(basedmg);
 	storage.hiddenpower.type = types[typedec];
 }
@@ -410,6 +415,7 @@ function initialize(gen)
 	storage.input.showstats = true;
 	storage.input.thumbs = false;
 	storage.lookup = [];
+	storage.kostep = 1;
 	storage.initialized = true;
 
 	if(gen == 1)
@@ -425,7 +431,6 @@ function initialize(gen)
 		storage.current_pokemon[1] = "Chikorita";
 		storage.current_pokemon[2] = 151;
 		storage.zone = "newbarktown";
-
 	}
 
 	storage.modecalculated = false;
@@ -449,8 +454,13 @@ function initialize(gen)
 	storage.thumbs = false;
 	storage.trackedindex = 0;
 	storage.type = "All";
-
 	clear();//must be called after initialization
+
+	if(window.innerWidth < 600)
+	{
+		//for narrow screens to inititially prevent display of base stats
+		storage.display.basestats = false;
+	}
 
 	localStorage.setItem('storage', JSON.stringify(storage));
 }
@@ -490,7 +500,7 @@ function clear()
 	storage.display.mode_dv = false;
 	storage.modecalculated = false;
 	storage.display.party = true;
-
+	storage.display.basestats = true;
 	storage.dvalues = createArray(storage.global.numstats, [-1, -1]);// array_fill(0, storage.global.numstats, array(-1, -1));
 	storage.stat_exp = createArray(storage.global.numstats, 0);//values involved in calculations must have Math.floor at 0, negative values cause incorrect results
 	storage.mode = createArray(storage.global.numstats, -1);
@@ -716,6 +726,13 @@ function evolve_pokemon(stage)
 {
 	var evolve = getPokemonEvolution(storage.current_pokemon[2]);
 	var newPokemon = getPokemonEvolution(evolve[stage] - 1);
+	if(!isSaved(storage.current_pokemon[0]))
+	{
+		console.log('not saved');
+		storage.firstSave = true;
+		storage.originalSpecies = storage.current_pokemon[1];
+	} else
+	console.log('saved');
 	storage.attributes = getPokemonByName(newPokemon.name);
 	storage.current_pokemon[1] = storage.attributes.name;
 	saveAll();
@@ -727,8 +744,8 @@ function evolve_pokemon(stage)
 */
 function update()
 {
-	storage.outofrange = false;//clear warning
 	var level = storage.stats.lvl;
+	storage.outofrange = false;//clear warning
 	populateTracker(storage.zone);
 
 	if(storage.evolve)
@@ -771,6 +788,8 @@ function update()
 		if(isSaved(id) && storage.savedpokemon[id].track)
 			storage.trackcount -= 1;
 	}
+
+	storage.kostep = (1 / storage.trackcount).toFixed(2);
 
 	//update stat experience based on all rows displayed in tracker
 	for(k = 0; k < storage.global.numpokemon; k++)
@@ -1311,6 +1330,7 @@ function update()
 		var saveid = storage.current_pokemon[0];
 		var keys = Object.keys(storage.savedpokemon);
 		var found = false;
+
 		for(i = 0; i < keys.length; i++)
 		{
 			if(saveid == keys[i])
@@ -1322,7 +1342,15 @@ function update()
 
 		if(!found)
 		{
-			saveid = "" + storage.current_pokemon[1] + "_" + ++storage.savecount[storage.current_pokemon[2]];
+			var saveSpecies = storage.current_pokemon[1];
+
+			if(storage.firstSave)
+			{
+				saveSpecies = storage.originalSpecies;
+				storage.firstSave = false;
+			}
+
+			saveid = "" + saveSpecies + "_" + ++storage.savecount[storage.current_pokemon[2]];
 			storage.current_pokemon[0] = saveid;
 		}
 
@@ -1430,6 +1458,7 @@ function setGlobals(gen)
 	storage.global.vitaminMax = 25600;
 	storage.global.vitamins = [10, 10, 10, 10, 10];//should not be global
 	storage.global.sortorder = 1;
+	storage.global.sortby = 'pokedex';
 
 	if(gen == 1)
 	{
@@ -1438,7 +1467,6 @@ function setGlobals(gen)
 		storage.global.base_stats_col = 2;
 		storage.global.numtypes = 15;
 		storage.global.numzones = 48;
-		storage.global.sortby = 'pokedex';
 	}
 	else if(gen == 2)
 	{
@@ -1447,7 +1475,6 @@ function setGlobals(gen)
 		storage.global.base_stats_col = 3;
 		storage.global.numtypes = 17;
 		storage.global.numzones = 45;
-		storage.global.sortby = 'johtodex';
 	}
 
 	localStorage.setItem('storage', JSON.stringify(storage));
