@@ -1,17 +1,3 @@
-/*  Title: DV Calculator
-		Description: A web browser application for calculating diversification values in generation 1 and 2 Pokemon games.
-    Copyright (C) 2018 Andrew Noble
-
-    This program is free software: you can redistribute it and/or modify
-    it under the terms of the GNU General Public License as published by
-    the Free Software Foundation, either version 3 of the License, or
-    (at your option) any later version.
-
-    This program is distributed in the hope that it will be useful,
-    but WITHOUT ANY WARRANTY; without even the implied warranty of
-    MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
-    GNU General Public License for more details. */
-
 //globals
 var data;
 var tables;
@@ -373,24 +359,16 @@ function calculateHiddenPower()
 		if(i != 3 && i != 4)
 		{
 			if(storage.mode[i] <= 7)
-			{
 				binary = binary + "0";
-			}
 			else
-			{
 				binary = binary + "1";
-			}
 		}
 	}
 
 	if(storage.mode[3] <= 7)
-	{
 		binary = binary + "0";
-	}
 	else
-	{
 		binary = binary + "1";
-	}
 
 	var x = parseInt(binary, 2);
 	var y = Math.min(storage.mode[4], 3);//special DV capped at 3
@@ -474,20 +452,19 @@ function clear()
 	storage.stats.hp = 0;
 	storage.stats.att = 0;
 	storage.stats.def = 0;
+	storage.stats.spd = 0;
 
 	if(storage.gen == 1)
 	{
-		storage.stats.spd = 0;
 		storage.stats.spc = 0;
 	}
 	else if(storage.gen == 2)
 	{
 		storage.stats.spca = 0;
 		storage.stats.spcd = 0;
-		storage.stats.spd = 0;
 	}
 
-	storage.knockouts = createArray(storage.global.numpokemon, 0);// new Array(storage.global.numpokemon);
+	storage.knockouts = createArray(storage.global.numpokemon, 0);
 	storage.accuracy = createArray(storage.global.numstats, 0);
 	storage.display = new Object();
 	storage.display.max = false;
@@ -501,8 +478,8 @@ function clear()
 	storage.modecalculated = false;
 	storage.display.party = true;
 	storage.display.basestats = true;
-	storage.dvalues = createArray(storage.global.numstats, [-1, -1]);// array_fill(0, storage.global.numstats, array(-1, -1));
-	storage.stat_exp = createArray(storage.global.numstats, 0);//values involved in calculations must have Math.floor at 0, negative values cause incorrect results
+	storage.dvalues = createArray(storage.global.numstats, [-1, -1]);
+	storage.stat_exp = createArray(storage.global.numstats, 0);
 	storage.mode = createArray(storage.global.numstats, -1);
 	storage.max = createArray(storage.global.numstats, -1);
 	storage.best = createArray(storage.global.numstats, -1);
@@ -530,7 +507,7 @@ function clear()
 		storage.rarity = storage.savedpokemon[saveid].rarity;
 		storage.accuracy = storage.savedpokemon[saveid].accuracy;
 		storage.track = storage.savedpokemon[saveid].track;
-		storage.input.track = storage.track;//hack
+		storage.input.track = storage.track;
 		storage.shiny = storage.savedpokemon[saveid].shiny;
 		storage.hiddenpower = storage.savedpokemon[saveid].hidden;
 		storage.modecalculated = storage.savedpokemon[saveid].modecalculated;
@@ -574,7 +551,6 @@ function isSaved(id)
 function pollInput()
 {
 	storage = JSON.parse(localStorage.getItem('storage'));
-
 	var id = storage.current_pokemon[0];
 
 	if(isset(storage.input.current))
@@ -589,76 +565,57 @@ function pollInput()
 	}
 
 	if(isSaved(id))
-	{
 		species = storage.savedpokemon[id].pokemon[1];//0 is id, 1 is species, 2 is pokedex
-	}
 	else
-	{
-		species = id;//here the species is set to the save id because the saved storage was cleared and saveid is no longer saved
-	}
+		species = id;
 
 	storage.attributes = getPokemonByName(species);
-	storage.current_pokemon = [id, species, storage.attributes.pokedex - 1];//Subtract 1 from Pokedex number to get index starting at 0
+	storage.current_pokemon = [id, species, storage.attributes.pokedex - 1];
 	storage.overwrite = storage.input.overwrite;
 
 	//Update stats
 	if(isset(storage.input.lvl))
-	{
 		storage.stats.lvl = storage.input.lvl;
-	}
+
 	if(isset(storage.input.hp))
-	{
 		storage.stats.hp = storage.input.hp;
-	}
+
 	if(isset(storage.input.att))
-	{
 		storage.stats.att = storage.input.att;
-	}
+
 	if(isset(storage.input.def))
-	{
 		storage.stats.def = storage.input.def;
-	}
+
 	if(isset(storage.input.spd))
-	{
 		storage.stats.spd = storage.input.spd;
-	}
 
 	if(storage.gen == 1)
 	{
 		if(isset(storage.input.spc))
-		{
 			storage.stats.spc = storage.input.spc;
-		}
 	}
 	else if(storage.gen == 2)
 	{
 		if(isset(storage.input.spca))
-		{
 			storage.stats.spca = storage.input.spca;
-		}
+
 		if(isset(storage.input.spcd))
-		{
 			storage.stats.spcd = storage.input.spcd;
-		}
 	}
 
 	//Update vitamins
 	if(isset(storage.input.vithp))
-	{
 		storage.vitamins[0] = storage.input.vithp;
-	}
+
 	if(isset(storage.input.vitatt))
-	{
 		storage.vitamins[1] = storage.input.vitatt;
-	}
+
 	if(isset(storage.input.vitdef))
-	{
 		storage.vitamins[2] = storage.input.vitdef;
-	}
+
 	if(isset(storage.input.vitspd))
-	{
 		storage.vitamins[3] = storage.input.vitspd;
-	}
+
 	if(isset(storage.input.vitspc))
 	{
 		storage.vitamins[4] = storage.input.vitspc;
@@ -672,20 +629,15 @@ function pollInput()
 	for(i = 0; i < storage.global.numstats; i++)
 	{
 		if(storage.vitamins[i] <= 0 || storage.vitamins[i] >= 10 )
-		{
 			storage.vitamins[i] = 0;
-		}
 	}
 
 	storage.calculate = storage.input.calculate;
 	storage.maxexp = storage.input.maxexp;
 	storage.track = storage.input.track;
-	//storage.save = (isset(storage.input.save)) ? true : false;
 
 	if(isset(storage.input.type))
-	{
 		storage.type = storage.input.type;
-	}
 }
 
 // Return the length of an Array or Object
@@ -726,21 +678,48 @@ function evolve_pokemon(stage)
 {
 	var evolve = getPokemonEvolution(storage.current_pokemon[2]);
 	var newPokemon = getPokemonEvolution(evolve[stage] - 1);
+
 	if(!isSaved(storage.current_pokemon[0]))
 	{
-		console.log('not saved');
 		storage.firstSave = true;
 		storage.originalSpecies = storage.current_pokemon[1];
-	} else
-	console.log('saved');
+	}
+
 	storage.attributes = getPokemonByName(newPokemon.name);
 	storage.current_pokemon[1] = storage.attributes.name;
 	saveAll();
 }
 
 /*
+* Generate lookup table for DVs 0 - 15 inclusive, for each stat. Performance expensive.. Makes 75 calls to math functions.
+* Code to generate lookup table should always run if a valid level is entered.
+*/
+function generateLookup()
+{
+		level = storage.stats.lvl;
+
+		if(level > storage.global.minlevel && level <= storage.global.maxlevel)
+		{
+			keys = Object.keys(storage.attributes);
+
+			for(i = 0; i <= storage.global.maxdv; i++)
+			{
+				storage.lookup[i] = [];
+				storage.lookup[i][0] = calculateHitpoints(level, storage.attributes.hp, i, storage.stat_exp[0]);
+
+				for(j=1;j<storage.global.numstats;j++)
+				{
+					storage.lookup[i][j] = calculateStat(level, storage.attributes[keys[j + storage.global.base_stats_col]], i, storage.stat_exp[j]);
+				}
+			}
+
+			storage.showtable = true;
+		}
+}
+
+/*
 * Called on each page refresh. Performs logic on new input and passes data to view.
-* Design is to minimize operatins on data, calls to the math library, and redundant loops.
+* Intent is to minimize operations on data, calls to the math library, and redundant loops.
 */
 function update()
 {
@@ -751,19 +730,20 @@ function update()
 	if(storage.evolve)
 	{
 		evolve_pokemon('next_stage');
+		generateLookup();
 		storage.evolve = false;
-		//must get new attributes before next call
 		calculateMaxStats();
 	}
 	else if(storage.revert)
 	{
 		evolve_pokemon('previous_stage');
+		generateLookup();
 		storage.revert = false;
 		calculateMaxStats();
 	}
 	else if(storage.levelup)
 	{
-		level++;//update temp variable for calculations down below .. check
+		level++;
 		storage.stats.lvl = level;
 		var keys = Object.keys(storage.stats);
 
@@ -772,6 +752,7 @@ function update()
 			storage.stats[keys[i]] = 0;
 		}
 
+		generateLookup();
 		storage.levelup = false;
 	}
 
@@ -779,17 +760,6 @@ function update()
 		storage.calculate = false;//enforce bounds on level
 
 	id = storage.current_pokemon[0];//reuse of temp variable
-
-	storage.trackcount = storage.numtracked;
-
-	//if current pokemon is tracked, reduce numtracked count by 1 to avoid counting it twice
-	if(storage.numtracked >= 1)
-	{
-		if(isSaved(id) && storage.savedpokemon[id].track)
-			storage.trackcount -= 1;
-	}
-
-	storage.kostep = (1 / storage.trackcount).toFixed(2);
 
 	//update stat experience based on all rows displayed in tracker
 	for(k = 0; k < storage.global.numpokemon; k++)
@@ -815,7 +785,7 @@ function update()
 			storage.knockouts[k] += delta;//Add delta to knockouts, round only here to preserve accuracy
 
 			if(storage.knockouts[k] < abs_min)//enforce absolute minimum total KO value
-				storage.knockouts[k] = 0;//otherwise it divides infinitely toward 0
+				storage.knockouts[k] = 0;       //otherwise it divides infinitely toward 0
 
 			//Loop through saved pokemon and update data
 			var keys = Object.keys(storage.savedpokemon);
@@ -854,10 +824,8 @@ function update()
 
 	var inRange = (storage.stats.lvl > storage.global.minlevel && storage.stats.lvl <= storage.global.maxlevel);
 
-	/*
-	* Calculate the DV stats for a Pokemon when the Calculate button was pressed.
-	* If level is 0 the calculateHitpointsDV function will throw a divide by 0 error
-	*/
+	// Calculate the DV stats for a Pokemon when the Calculate button was pressed.
+
 	if(storage.calculate == true && inRange)
 	{
 		var knockoutKeys = Object.keys(storage.knockouts);
@@ -885,12 +853,11 @@ function update()
 		if(storage.veteran)
 		{
 			storage.display.stat_exp = true;
-			maxExp = storage.global.maxStatExp;//Temp variable to save code space
 
 			//Set stat experience to maximum possible if max option is checked
 			if(storage.maxexp)
 			{
-				storage.stat_exp = createArray(storage.global.numstats, maxExp);
+				storage.stat_exp = createArray(storage.global.numstats, storage.global.maxStatExp);
 			}
 			else
 			{
@@ -909,7 +876,7 @@ function update()
 					if(storage.vitamins[x] > 0)
 						storage.stat_exp[i] = storage.global.vitaminMax - storage.vitamins[x] * storage.global.vitaminStep;
 
-					//Test bounds
+					//Enforce bounds
 					if(storage.stat_exp[i] < 0)
 						storage.stat_exp[i] = 0;
 					else if(storage.stat_exp[i] > storage.global.maxStatExp)
@@ -1039,33 +1006,30 @@ function update()
 				for(i = 0; i < storage.global.numstats; i++)
 				{
 					var occurrences = createArray(16, 0);
+
 					for(k = 0; k < storage.records.length; k++)
 					{
 						var row = storage.records[k];
 						//count the occurences of a DV
 						for(j = row[0][0]; j <= row[0][1]; j++)//for the range of dv
 						{
-							if(j >= 0)//this validation hack shouldn't be necessary, where is data becoming -1 in the records?
-							{
+							if(j >= 0)
 								occurrences[j]++;
-							}
 						}
 					}
 
 					var largest = Math.max(occurrences);
-
 					var identical = [-1];//-1 or division by zero error occurs
 					//-1 is hack for occurrences having index of 16
 
 					for(j = 0; j < getLength(occurrences) - 1; j++)
 					{
 						if(occurrences[j] == largest)
-						{
 							array_push(identical, "j");
-						}
 					}
 
 					var avg = 0;
+
 					for(j = 0; j < getLength(identical); j++)
 					{
 						avg += identical[j];
@@ -1077,7 +1041,6 @@ function update()
 
 					if(d < 0)
 					{
-						//how could max ever be smaller than min?
 						storage.mode[i] = min[i];
 						d = 0;
 					}
@@ -1250,10 +1213,12 @@ function update()
 				if(getLength(storage.records) > 0)
 				{
 					var rarity = 1;
+
 					for(i = 1; i < getLength(storage.mode); i++)
 					{
 						rarity *= (16 - storage.mode[i]) / 16;
 					}
+
 					storage.rarity = Math.floor(1 / rarity);
 					storage.display.rare = true;
 				}
@@ -1264,19 +1229,16 @@ function update()
 				if(storage.mode[2] == 10 && storage.mode[3] == 10)
 				{
 					if(storage.mode[4] == 10)
-					{
 						allten = true;
-					}
 				}
 
 				if(allten)
 				{
 					var att = storage.mode[1];
+
 					if(att == 2 || att == 3 || att == 6 || att == 7
 						|| att == 10 || att == 11 || att == 14 || att == 15)
-					{
 						storage.shiny = true;
-					}
 				}
 			}
 		}
@@ -1286,35 +1248,12 @@ function update()
 			storage.prompt = false;
 		}
 
-		/*
-		* Generate lookup table for DVs 0 - 15 inclusive, for each stat. Performance expensive.. Makes 75 calls to math functions.
-		* Code to generate lookup table should always run if a valid level is entered.
-		* Check the cache for same level and pokemon before running again?
-		*/
-		level = storage.stats.lvl;
+		generateLookup();
 
-		if(level > storage.global.minlevel && level <= storage.global.maxlevel)
+		if(valid)
 		{
-			keys = Object.keys(storage.attributes);
-
-			for(i = 0; i <= storage.global.maxdv; i++)
-			{
-				storage.lookup[i] = [];
-				storage.lookup[i][0] = calculateHitpoints(level, storage.attributes.hp, i, storage.stat_exp[0]);
-
-				for(j=1;j<storage.global.numstats;j++)
-				{
-					storage.lookup[i][j] = calculateStat(level, storage.attributes[keys[j + storage.global.base_stats_col]], i, storage.stat_exp[j]);
-				}
-			}
-
-			storage.showtable = true;
-
-			if(valid)
-			{
-				calculateMaxStats();
-				level = storage.stats.lvl;
-			}
+			calculateMaxStats();
+			level = storage.stats.lvl;
 		}
 
 		storage.input.calculate = false;
@@ -1355,16 +1294,15 @@ function update()
 		}
 
 		//update number of tracked pokemon, used in calculating distribution of KOs
-		//if numtracked somehow became 6 it would become impossible to untrack
-		//because the decrement is nested within a conditional block enforcing the adding bounds
 		var exists = isset(storage.savedpokemon[saveid]);
+
 		if(storage.numtracked <= 5)
 		{
 			if(storage.track)
 			{
 				if(isset(storage.savedpokemon[saveid]))
 				{
-					if(!storage.savedpokemon[saveid]["track"])
+					if(!storage.savedpokemon[saveid].track)
 					{
 						storage.numtracked++;
 					}
@@ -1377,23 +1315,18 @@ function update()
 			else
 			{
 				if(isset(storage.savedpokemon[saveid]))
-				{
-					if(storage.savedpokemon[saveid]["track"])
-					{
+					if(storage.savedpokemon[saveid].track)
 						storage.numtracked--;
-					}
-				}
 			}
 		}
 		else
 		{
-			if(exists)
+			storage.track = false;
+
+			if(isset(storage.savedpokemon[saveid]))
 			{
-				storage.track = storage.savedpokemon[saveid].track;
-			}
-			else
-			{
-				storage.track = false;
+				if(storage.savedpokemon[saveid].track)
+					storage.numtracked--;
 			}
 		}
 
@@ -1418,6 +1351,18 @@ function update()
 		storage.savedpokemon[saveid] = entry;//write save entry to storage
 		storage.save = false;
 	}//end of save routine
+
+	id = storage.current_pokemon[0];
+	storage.trackcount = storage.numtracked;
+
+	//if current pokemon is tracked, reduce numtracked count by 1 to avoid counting it twice
+	if(storage.numtracked >= 1)
+	{
+		if(isSaved(id) && storage.savedpokemon[id].track)
+			storage.trackcount -= 1;
+	}
+
+	storage.kostep = (1 / storage.trackcount).toFixed(2);
 
 	//get a list of Pokemon that can be encountered in the current zone and store it for use in view
 	var zone = storage.zone;
@@ -1456,7 +1401,6 @@ function setGlobals(gen)
 	storage.global.maxStatExp = 65025;
 	storage.global.vitaminStep = 2560;
 	storage.global.vitaminMax = 25600;
-	storage.global.vitamins = [10, 10, 10, 10, 10];//should not be global
 	storage.global.sortorder = 1;
 	storage.global.sortby = 'pokedex';
 
@@ -1577,12 +1521,11 @@ function getPokemonInZone(zone)
 	else
 	{
 		var j = 0;
+
 		for(i = 0; i < storage.global.numpokemon; i++)
 		{
 			if(tables.pokemon[i][zone] == 1)
-			{
 				inzone[j++] = pokemon[i];
-			}
 		}
 	}
 
@@ -1664,3 +1607,4 @@ async function cacheTables(gen)
 	localStorage.setItem('tables', JSON.stringify(tables));
 	tables = JSON.parse(localStorage.getItem('tables'));
 }
+//EOF

@@ -1,6 +1,19 @@
+**********************
+
+2018-06-10
+
+DV Calculator by tewky
+
+Supports Firefox and Chrome. Tested in Firefox - Chrome might have UI bugs.
+
+Thanks for using the DV Calculator!
+
+**********************
+
+
 Title: DV Calculator
 Description: A web browser application for calculating diversification values in generation 1 and 2 Pokemon games.
-Copyright (C) 2018 Andrew Noble
+Copyright (C) 2018 tewky @ github.com
 
 This program is free software: you can redistribute it and/or modify
 it under the terms of the GNU General Public License as published by
@@ -13,15 +26,4 @@ MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
 GNU General Public License for more details.
 
 
-**********************
 
-2018-05-26
-
-DV Calculator by Andrew Noble
-Supports Firefox and Chrome. Works best in Firefox.
-
-Documentation will be added soon.
-
-Thanks for using the DV Calculator!
-
-**********************
