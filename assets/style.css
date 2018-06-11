@@ -1,17 +1,3 @@
-/*  Title: DV Calculator
-		Description: A web browser application for calculating diversification values in generation 1 and 2 Pokemon games.
-    Copyright (C) 2018 Andrew Noble
-
-    This program is free software: you can redistribute it and/or modify
-    it under the terms of the GNU General Public License as published by
-    the Free Software Foundation, either version 3 of the License, or
-    (at your option) any later version.
-
-    This program is distributed in the hope that it will be useful,
-    but WITHOUT ANY WARRANTY; without even the implied warranty of
-    MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
-    GNU General Public License for more details. */
-
 *
 {
 	border: 0;
@@ -53,7 +39,7 @@ div.column
 {
 	background-color: #FCFCF0;
 	display: inline-block;
-	margin: 10px 5px 0;
+	margin: 10px 5px 5px;
 	box-shadow: 1px 1px 3px black;
 }
 
@@ -556,7 +542,7 @@ tr.record:last-of-type
 
 #ERROR_CONTAINER input[type='checkbox']
 {
-	margin: 8px 0 0 7px;
+	margin: 3px 0 0 7px;
 }
 
 #POKEMON_CONTROLS button
@@ -799,7 +785,7 @@ tr.record:last-of-type
 	visibility: visible;
 	background-size: contain;
 	background-repeat: no-repeat;
-	background-image: url('maps/player_target.png');
+	background-image: url('player_target.png');
 }
 
 .index
@@ -867,3 +853,9 @@ tr.record:last-of-type
 {
 	text-decoration: underline;
 }
+
+.linked
+{
+	border-width: 0 0 1px;
+}
+/*EOF*/
