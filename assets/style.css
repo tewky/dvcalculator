@@ -379,7 +379,7 @@ tr.record:last-of-type
 
 #PLAYER
 {
-		width: 7.5%;
+	width: 7.5%;
 }
 
 #POKEMON
@@ -858,4 +858,4 @@ tr.record:last-of-type
 {
 	border-width: 0 0 1px;
 }
-/*EOF*/
+/* EOF */
