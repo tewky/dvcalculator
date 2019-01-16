@@ -16,7 +16,7 @@ function isset(a)
 	return (typeof a !== 'undefined' && a != null);
 }
 
-// Return a new Array of length @size filled with default value given by @initial
+// Return a new array of length @size filled with default value given by @initial
 function createArray(size, initial)
 {
 	var array = [];
@@ -27,21 +27,21 @@ function createArray(size, initial)
 	return array;
 }
 
-// Level up the current Pokemon by 1 level.
+// Level up the current pokemon by 1 level.
 function levelUp()
 {
 	storage.levelup = true;
 	saveAll();
 }
 
-// Evolve the current Pokemon.
+// Evolve the current pokemon.
 function evolvePokemon()
 {
 	storage.evolve = true;
 	saveAll();
 }
 
-// Devolve the current Pokemon.
+// Devolve the current pokemon.
 function devolvePokemon()
 {
 	storage.revert = true;
