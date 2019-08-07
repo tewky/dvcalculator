@@ -814,12 +814,14 @@ function update()
 				storage.manualEntry[k + 1] = false;
 			}
 
-			storage.knockouts[k] += Number.parseFloat(delta);//Add delta to knockouts, no rounding for maximum precision
+			delta = Number.parseFloat(delta);
 
-			/* catch empty or bad input causing NaN, reset to 0 */
-			if(isNaN(storage.knockouts[k]))
-				storage.knockouts[k] = 0;
-			
+			/* catch empty or bad input causing NaN */
+			if(isNaN(delta))
+				delta = 0;
+			else
+				storage.knockouts[k] += delta;// Add delta to knockouts, no rounding for maximum precision
+
 			if(storage.knockouts[k] < abs_min)//enforce absolute minimum total KO value
 				storage.knockouts[k] = 0;       //otherwise it divides infinitely toward 0
 
