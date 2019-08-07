@@ -24,7 +24,10 @@
 			cached = false;
 		}
 		</script>
+		<div style='width: 80%; margin: 10px auto; font-size: 0.8em;'>Bug fix: experience tracker has been modified to work properly with manual KO entry on mobile phones. On some devices the spinner would not be displayed
+			and manual entry of the KOs would not be properly distributed between pokemon sharing experience.</div>
 		<div id="CONTAINER">
+
 			<form id="FORM" method="POST">
 				<div id="HEADER">
 					<!--if user presses enter on page focus this blocks an unwanted submit action-->
@@ -595,9 +598,9 @@
 				</div>
 				<div class='column'>
 					<h4 id='ZONE_CONTROLS'>
-						<span>Tracker</span>
-						<input class='smallButton' type='button' name='basestats' value='Stats' onclick='baseStats()'/>
-						<input class='smallButton' type='button' name='veteran' value='Veteran' onclick='veteranMode()'/>
+						<!--<span>Tracker</span>-->
+						<input class='smallButton' type='button' name='basestats' value='Show Base Stats' onclick='baseStats()'/>
+						<input class='smallButton' type='button' name='veteran' value='Veteran Mode' onclick='veteranMode()'/>
 						<script>
 						if(cached)
 						{
@@ -661,7 +664,7 @@
 											div.style.setProperty('left', left + '%');
 											div.style.setProperty('top', fromTop + '%');
 											$('MAP_CONTAINER').appendChild(div);
-										  var style = document.createElement('style');
+										    var style = document.createElement('style');
 											style.innerHTML = 'div#' + name + ':hover::after { content: \"' + caption + '\"; \
 												background-color: #ebebeb; float: left; box-shadow: inset #575757 -1px -1px 5px; border-radius: 3px; \
 												position: relative; left: -50px; top: -30px; width: 150px; padding: 3px; z-index: 1;}';
@@ -808,7 +811,7 @@
 										td.appendChild(div);
 										var style = document.createElement('style');
 										text = document.createTextNode('#' + id + ":hover::after {content:'"
-											+ id + "'; float: left; position: absolute; top: 1px; left: 42%; width: 40px; font-weight: bold; font-variant: small-caps;}");
+											+ id + "'; float: left; position: absolute; top: 2px; left: 43%; width: 40px; font-weight: bold; font-variant: small-caps;}");
 										style.appendChild(text);
 										td.appendChild(style);
 										count++;
@@ -937,15 +940,26 @@
 							var div = document.createElement('div');
 							var id = row.pokedex;
 							var input = document.createElement('input');
+							var arrow = document.createElement('img');
 							div.setAttribute('id', 'KO' + id);
 							input.setAttribute('name', 'k' + id);
 							input.setAttribute('id', 'k' + id);
 							input.setAttribute('value', ko);
 							input.setAttribute('type', 'number');
-							input.setAttribute('step', storage.kostep);
+							input.setAttribute('step', parseFloat(storage.display.kostep));
 							input.setAttribute('max', '999');
 							input.setAttribute('min', '0');
+							input.setAttribute('onfocus', 'setManual(' + id + ')');
+							arrow.setAttribute('src', 'assets/down_arrow.png');
+							arrow.setAttribute('class', 'trackerArrow');
+							arrow.setAttribute('onclick', 'decreaseKO(' + id  + ')');
+							div.appendChild(arrow);
 							div.appendChild(input);
+							arrow = document.createElement('img');
+							arrow.setAttribute('src', 'assets/up_arrow.png');
+							arrow.setAttribute('class', 'trackerArrow');
+							arrow.setAttribute('onclick', 'increaseKO(' + id  + ')');
+							div.appendChild(arrow);
 							td.appendChild(div);
 							tr.appendChild(td);
 							$('TRACKER').appendChild(tr);
