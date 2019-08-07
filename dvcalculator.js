@@ -816,6 +816,10 @@ function update()
 
 			storage.knockouts[k] += Number.parseFloat(delta);//Add delta to knockouts, no rounding for maximum precision
 
+			/* catch empty or bad input causing NaN, reset to 0 */
+			if(isNaN(storage.knockouts[k]))
+				storage.knockouts[k] = 0;
+			
 			if(storage.knockouts[k] < abs_min)//enforce absolute minimum total KO value
 				storage.knockouts[k] = 0;       //otherwise it divides infinitely toward 0
 
