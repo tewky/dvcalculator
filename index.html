@@ -31,19 +31,6 @@
 				<div id="HEADER">
 					<!--if user presses enter on page focus this blocks an unwanted submit action-->
 					<input id='DUMMY' name='dummy' type='button' action='#' value=''/>
-					<script>
-					//add change generation button to header
-					var value = 'gen 2';
-
-					if(storage.gen == 2)
-						value = 'gen 1';
-
-					var button = document.createElement('input');
-					button.setAttribute('type', 'button');
-					button.setAttribute('onclick', 'changeGen()');
-					button.setAttribute('value', value);
-					$('HEADER').appendChild(button);
-					</script>
 					<h3>Pokemon</h3>
 					<script>
 					if(storage.gen == 1)
@@ -73,9 +60,24 @@
 					}
 					</script>
 					<h3>DV Calculator</h3>
-					<input name='reset' type='button' value='reset' onclick='resetCalc()'/>
-					<div id='PROMPT'>
-						<input id='CONFIRM_RESET' name='confirm' type='checkbox'/>
+					<div id='RESET_CONTROLS'>
+						<script>
+							//add change generation button to header
+							var value = 'gen 2';
+
+							if(storage.gen == 2)
+								value = 'gen 1';
+
+							var button = document.createElement('input');
+							button.setAttribute('type', 'button');
+							button.setAttribute('onclick', 'changeGen()');
+							button.setAttribute('value', value);
+							$('RESET_CONTROLS').appendChild(button);
+						</script>
+						<input name='reset' type='button' value='reset' onclick='resetCalc()'/>
+						<div id='PROMPT'>
+							<input id='CONFIRM_RESET' name='confirm' type='checkbox'/>
+						</div>
 					</div>
 				</div>
 				<div class='column'>
@@ -406,7 +408,8 @@
 								td.appendChild(text);
 								$("HIPO").appendChild(td);
 								td = document.createElement('td');
-								td.setAttribute('colspan', 3);
+								// only displayed gen 2 so colspan relative to numstats unneeded
+								td.setAttribute('colspan', 4);
 								text = document.createTextNode(String(storage.hiddenpower.damage));
 								td.appendChild(text);
 								$("HIPO").appendChild(td);
@@ -811,7 +814,7 @@
 										td.appendChild(div);
 										var style = document.createElement('style');
 										text = document.createTextNode('#' + id + ":hover::after {content:'"
-											+ id + "'; float: left; position: absolute; top: 2px; left: 43%; width: 40px; font-weight: bold; font-variant: small-caps;}");
+											+ id + "'; float: left; position: absolute; top: 3px; left: 43%; width: 40px; font-weight: bold; font-variant: small-caps;}");
 										style.appendChild(text);
 										td.appendChild(style);
 										count++;
@@ -947,8 +950,8 @@
 							input.setAttribute('value', ko);
 							input.setAttribute('type', 'number');
 							input.setAttribute('step', parseFloat(storage.display.kostep));
-							input.setAttribute('max', '999');
-							input.setAttribute('min', '0');
+							input.setAttribute('max', '999.0');
+							input.setAttribute('min', '0.0');
 							input.setAttribute('onfocus', 'setManual(' + id + ')');
 							arrow.setAttribute('src', 'assets/down_arrow.png');
 							arrow.setAttribute('class', 'trackerArrow');
@@ -971,7 +974,16 @@
 				</div>
 			</form>
 			<div style='width: 80%; margin: 10px auto; font-size: 0.8em;'>Bug fix: experience tracker has been modified to work properly with manual KO entry on mobile phones. On some devices the spinner would not be displayed
-					and manual entry of the KOs would not be properly distributed between pokemon sharing experience.</div>
+					and manual entry of the KOs would not be properly distributed between pokemon sharing experience.<br/>
+				<span style="font-weight: bold;">*If you manually enter the number of KOs track the whole KO (increment by 1, don't calculate the partial increment yourself)
+					then press save. The green arrows will not function until you save... you cannot mix the manual entry mode and using the arrows
+					at the same time.
+				</span>
+				<br/>
+				<div style="font-style: italic; margin-top: 15px;">
+					Questions or comments? tewky57@protonmail.com
+				</div>
+			</div>
 		</div>
 	</body>
 </html>

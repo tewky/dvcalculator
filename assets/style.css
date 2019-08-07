@@ -113,9 +113,11 @@ input.button:hover
 	background-color: #ebebeb;
 }
 
-input[type='checkbox']
+/* targets the calculate button */
+input.button:first-of-type
 {
-	transform: scale(1.2);
+	font-size: 0.95em;
+	padding: 6px;
 }
 
 label
@@ -282,7 +284,7 @@ tr.record:last-of-type
 #HEADER input
 {
 	background-color: #ebebeb;
-	padding: 4px;
+	padding: 3px 4px 4px;
 	float: right;
 	font-variant: small-caps;
 	font-size: 0.9em;
@@ -293,6 +295,11 @@ tr.record:last-of-type
 {
 	background-color: #d41717;
 	color: white;
+}
+
+#RESET_CONTROLS
+{
+	display: inline-block;
 }
 
 #DUMMY
@@ -353,6 +360,7 @@ tr.record:last-of-type
 
 #PARTY td
 {
+	position: relative;
 	padding: 2px 3px 4px;
 }
 
@@ -531,6 +539,11 @@ tr.record:last-of-type
 	margin: 3px 0 0 7px;
 }
 
+#POKEMON_CONTROLS 
+{
+	position: relative;
+}
+
 #POKEMON_CONTROLS button
 {
 	margin: 8px 7px 0;
@@ -555,8 +568,12 @@ tr.record:last-of-type
 
 #TRACK
 {
-	margin: 10px 8px 0;
-	transform: scale(1.5);
+	margin: 1px 8px 0;
+	/* vertically center the checkbox */
+	position: absolute;
+	top: 50%;
+	-ms-transform: translateY(-50%);
+	transform: translateY(-50%);
 }
 
 #TRACKER img
@@ -592,9 +609,10 @@ tr.record:last-of-type
 	display: inline-block;
 	box-shadow: 0 1px 2px black;
 	text-align: left;
-	margin: -2px 3px 0;
-	padding: 0 0 0 3px;
-	width: 40px;
+	font-size: 0.8em;
+	margin: 1px 0 0 -1px;
+	padding: 0 0 0 2px;
+	width: 35px;
 	-moz-appearance:textfield;
 }
 
@@ -840,8 +858,13 @@ tr.record:last-of-type
 
 .trackerArrow
 {
-	margin: 5px 3px 3px 10px;
+	margin: 5px 0 0;
 	display: inline-block;
+}
+
+.trackerArrow:last-of-type
+{
+	margin: 4px 0 0 7px;
 }
 
 .underline
