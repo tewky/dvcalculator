@@ -48,6 +48,33 @@ function devolvePokemon()
 	saveAll();
 }
 
+// Increase the knockout count of a pokemon
+function increaseKO(id)
+{
+	if(storage.manualEntry[id] == false)
+	{
+		var entry = $('k' + id);
+		entry.value = parseFloat(entry.value) + parseFloat(storage.kostep);
+	}
+}
+
+// Decrease the knockout count of a pokemon
+function decreaseKO(id)
+{
+	if(storage.manualEntry[id] == false)
+	{
+		var entry = $('k' + id);
+		entry.value = parseFloat(entry.value) - parseFloat(storage.kostep);
+	}
+}
+
+// Set manual entry mode for a KO input field
+function setManual(id) 
+{
+	storage.manualEntry[id] = true;//id is index in the pokedex
+	$('k' + id).style.backgroundColor = '#ff8fa0';
+}
+
 // Set the experience tracker column by which to sort its entries.
 function sortBy(column)
 {
@@ -390,8 +417,6 @@ function initialize(gen)
 	storage.displayData = new Object();
 	storage.display = new Object();
 	storage.current_pokemon = new Array();
-	storage.input.showstats = true;
-	storage.input.thumbs = false;
 	storage.lookup = [];
 	storage.kostep = 1;
 	storage.initialized = true;
@@ -427,9 +452,7 @@ function initialize(gen)
 	storage.confirmreset = false;
 	storage.save = false;
 	storage.savedpokemon = new Object();
-	storage.showstats = true;
 	storage.sortorder = "ASC";
-	storage.thumbs = false;
 	storage.trackedindex = 0;
 	storage.type = "All";
 	clear();//must be called after initialization
@@ -465,6 +488,7 @@ function clear()
 	}
 
 	storage.knockouts = createArray(storage.global.numpokemon, 0);
+	storage.manualEntry = createArray(storage.global.numpokemon, false);
 	storage.accuracy = createArray(storage.global.numstats, 0);
 	storage.display = new Object();
 	storage.display.max = false;
@@ -477,7 +501,8 @@ function clear()
 	storage.display.mode_dv = false;
 	storage.modecalculated = false;
 	storage.display.party = true;
-	storage.display.basestats = true;
+	storage.display.basestats = false;
+	storage.display.kostep = 1.0 / 6.0;
 	storage.dvalues = createArray(storage.global.numstats, [-1, -1]);
 	storage.stat_exp = createArray(storage.global.numstats, 0);
 	storage.mode = createArray(storage.global.numstats, -1);
@@ -775,14 +800,21 @@ function update()
 			var delta = knockouts - storage.knockouts[k];//Find diff. between input and stored value
 			min = 1 / storage.numtracked;//Set minimum step size
 
-			if(delta != 0 && Math.abs(delta) < min)
+			if(storage.manualEntry[k + 1] == true) //indexed by pokedex
 			{
-				var sign = delta / Math.abs(delta);
-				delta = sign * min;//enforce minimum step size
+				
+				//manual entry was performed so divide exp. here instead of button callbacks
+				delta /= storage.trackcount;
+
+				if(Math.abs(delta) < min)
+				{
+					delta = Math.sign(delta) * min; //enforce minimum step size
+				}
+
+				storage.manualEntry[k + 1] = false;
 			}
 
-			delta = Number.parseFloat(delta.toFixed(2));
-			storage.knockouts[k] += delta;//Add delta to knockouts, round only here to preserve accuracy
+			storage.knockouts[k] += Number.parseFloat(delta);//Add delta to knockouts, no rounding for maximum precision
 
 			if(storage.knockouts[k] < abs_min)//enforce absolute minimum total KO value
 				storage.knockouts[k] = 0;       //otherwise it divides infinitely toward 0
@@ -1362,7 +1394,7 @@ function update()
 			storage.trackcount -= 1;
 	}
 
-	storage.kostep = (1 / storage.trackcount).toFixed(2);
+	storage.kostep = 1.0 / storage.trackcount;
 
 	//get a list of Pokemon that can be encountered in the current zone and store it for use in view
 	var zone = storage.zone;
@@ -1548,25 +1580,7 @@ function getZoneCaptions()
 // Load JSON file @path
 async function loadTable(path, title, index)
 {
-	var temp;
-
-	if(navigator.userAgent.indexOf("Firefox") !== -1)
-	{
-		temp = fetch(path)
-			.then(function(response) {
-				return response.json();
-			})
-			.then(function(myJson) {
-				return JSON.stringify(myJson);
-			});
-	}
-	else
-	{
-		temp = JSON.parse(data);
-		temp = JSON.stringify(temp[index]);
-	}
-
-	return temp;
+	return JSON.stringify(JSON.parse(data)[index]);;
 }
 
 // Load data tables into local storage
