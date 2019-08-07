@@ -282,19 +282,14 @@ tr.record:last-of-type
 #HEADER input
 {
 	background-color: #ebebeb;
-	padding: 0 3px 3px;
+	padding: 4px;
 	float: right;
 	font-variant: small-caps;
-	margin: 5px 3px 3px;
+	font-size: 0.9em;
+	margin: 7px 3px 3px;
 }
 
-#HEADER input[type='submit']:hover
-{
-	background-color: #d41717;
-	color: white;
-}
-
-#HEADER input.floatRight:hover
+#HEADER input:hover
 {
 	background-color: #d41717;
 	color: white;
@@ -493,15 +488,6 @@ tr.record:last-of-type
 	border-width: 0;
 }
 
-#ZONE input[type='number']
-{
-	background-color: #f7f7f7;
-	margin: 0 8px 0 0;
-	padding: 0 2px 3px;
-	border-width: 1px;
-	border-style: solid;
-}
-
 #TRACKER_CONTROLS
 {
 	width: 100%;
@@ -547,7 +533,7 @@ tr.record:last-of-type
 
 #POKEMON_CONTROLS button
 {
-	margin: 8px 6px 0;
+	margin: 8px 7px 0;
 	transform: scale(1.3);
 }
 
@@ -594,19 +580,22 @@ tr.record:last-of-type
 	width: 100%;
 }
 
-#TRACKER input
-{
-	margin: 1px 2px;
-	padding: 0 2px 0 0;
-	width: 50px;
+/* disable spinner */
+#TRACKER input::-webkit-outer-spin-button,
+#TRACKER input::-webkit-inner-spin-button {
+    -webkit-appearance: none;
+    margin: 0;
 }
 
 #TRACKER input[type='number']
 {
+	display: inline-block;
 	box-shadow: 0 1px 2px black;
 	text-align: left;
-	margin: -3px 0 0;
-	padding: 0 0 0 5px;
+	margin: -2px 3px 0;
+	padding: 0 0 0 3px;
+	width: 40px;
+	-moz-appearance:textfield;
 }
 
 #TRACKER tr td:first-child
@@ -847,6 +836,12 @@ tr.record:last-of-type
 .title
 {
 	font-weight: bold;
+}
+
+.trackerArrow
+{
+	margin: 5px 3px 3px 10px;
+	display: inline-block;
 }
 
 .underline
