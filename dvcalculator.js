@@ -27,6 +27,12 @@ function createArray(size, initial)
 	return array;
 }
 
+// Determine whether a number is odd or even
+function even(num) 
+{
+	return num % 2 == 0;
+}
+
 // Level up the current pokemon by 1 level.
 function levelUp()
 {
@@ -1246,18 +1252,34 @@ function update()
 
 				calculateHiddenPower();
 
-				//calculate pokemon's rarity, which is the probability of finding same DVs or better in
-				//any random wild pokemon
+				//calculate pokemon's rarity, which is the probability of finding same DVs or better in any random wild pokemon
 				if(getLength(storage.records) > 0)
 				{
 					var rarity = 1;
+					var hp = 1;
 
+					//runs once for each stat (4)
 					for(i = 1; i < getLength(storage.mode); i++)
 					{
-						rarity *= (16 - storage.mode[i]) / 16;
+						if(!(storage.gen == 2 && i == 5))
+						{
+							rarity *= (16.0 - parseFloat(storage.mode[i])) / 16.0;
+							//50% chance is odd, weighted by contribution to total
+							if(!even(storage.mode[i]))
+							{
+								var div = Math.pow(2, i - 1);
+								console.log("hp div" + div);
+								console.log("storage.mode[i]) " + storage.mode[i]);
+								console.log("hp weight "+ (0.5 / div) );
+								hp *= 2 * (1 - 0.5 / div) * 0.5;//weight * probability of odd
+								
+							}
+						}
 					}
-
-					storage.rarity = Math.floor(1 / rarity);
+					
+					hp = (1 / hp) - 1;//arbitrary translation
+					hp = Math.max(1, hp);
+					storage.rarity = Math.ceil(1.0 / rarity  * hp);
 					storage.display.rare = true;
 				}
 
