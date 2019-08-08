@@ -57,7 +57,7 @@ function devolvePokemon()
 // Increase the knockout count of a pokemon
 function increaseKO(id)
 {
-	if(storage.manualEntry[id] == false)
+	if(storage.manualEntry[id - 1] == false)
 	{
 		var entry = $('k' + id);
 		entry.value = parseFloat(entry.value) + parseFloat(storage.kostep);
@@ -67,7 +67,7 @@ function increaseKO(id)
 // Decrease the knockout count of a pokemon
 function decreaseKO(id)
 {
-	if(storage.manualEntry[id] == false)
+	if(storage.manualEntry[id - 1] == false)
 	{
 		var entry = $('k' + id);
 		entry.value = parseFloat(entry.value) - parseFloat(storage.kostep);
@@ -77,8 +77,12 @@ function decreaseKO(id)
 // Set manual entry mode for a KO input field
 function setManual(id) 
 {
-	storage.manualEntry[id] = true;//id is index in the pokedex
-	$('k' + id).style.backgroundColor = '#ff8fa0';
+	var i = id - 1;
+	storage.manualEntry[i] = true;//id is index in the pokedex	
+	var entry = $('k' + id);
+	storage.previousKO[i] = parseFloat(entry.value);
+	entry.value = 0;
+	entry.style.backgroundColor = '#ff8fa0';
 }
 
 // Set the experience tracker column by which to sort its entries.
@@ -252,9 +256,29 @@ function getFormInput()
 function saveAll()
 {
 	getFormInput();
+	//updateManualKO();
 	storage.save = true;
 	refresh();
 }
+
+// Update the KO input fields with manual data
+/*function updateManualKO()
+{
+	console.log(" s " + storage.manualEntry.length);
+	for(var i = 0; i < storage.manualEntry.length; i++)
+	{
+		if(storage.manualEntry[i] == true)
+		{
+			console.log("add " + $('k' + i).value);
+			console.log("prev " + storage.previousKO[i]);
+			$('k' + i).value = storage.previousKO[i] + parseFloat($('k' + i).value);
+			console.log("new " + $('k' + i).value);
+		} else {
+			console.log("fu");
+		}
+	}
+	alert("t");
+}*/
 
 // Change current Pokemon to that selected in the form.
 function changePokemon()
@@ -495,6 +519,7 @@ function clear()
 
 	storage.knockouts = createArray(storage.global.numpokemon, 0);
 	storage.manualEntry = createArray(storage.global.numpokemon, false);
+	storage.previousKO = createArray(storage.global.numpokemon, 0);
 	storage.accuracy = createArray(storage.global.numstats, 0);
 	storage.display = new Object();
 	storage.display.max = false;
@@ -799,16 +824,19 @@ function update()
 
 		if(isset(storage.input[id]))
 		{
-			var min = 0;
+			var min = 1 / storage.numtracked;//set minimum step size
 			var abs_min = 0.15;//absolute minimum step size to prevent infinite division toward 0
 			var knockouts = Number.parseFloat(storage.input[id]);
 			storage.knockouts[k] = Number.parseFloat(storage.knockouts[k]);
-			var delta = knockouts - storage.knockouts[k];//Find diff. between input and stored value
-			min = 1 / storage.numtracked;//Set minimum step size
 
-			if(storage.manualEntry[k + 1] == true) //indexed by pokedex
+			if(storage.manualEntry[k] == true) 
+				knockouts += parseFloat(storage.previousKO[k]);
+
+			var delta = knockouts - storage.knockouts[k];//Find diff. between input and stored value
+
+			if(storage.manualEntry[k] == true) //indexed by pokedex
 			{
-				
+
 				//manual entry was performed so divide exp. here instead of button callbacks
 				delta /= storage.trackcount;
 
@@ -817,7 +845,13 @@ function update()
 					delta = Math.sign(delta) * min; //enforce minimum step size
 				}
 
-				storage.manualEntry[k + 1] = false;
+				//console.log("add " + knockouts);
+				console.log("prev " + storage.previousKO[k]);
+				//delta = knockouts - storage.knockouts[k];
+				console.log("delta " + delta);
+
+				storage.manualEntry[k] = false;
+				storage.previousKO[k] = 0;
 			}
 
 			delta = Number.parseFloat(delta);
@@ -827,6 +861,8 @@ function update()
 				delta = 0;
 			else
 				storage.knockouts[k] += delta;// Add delta to knockouts, no rounding for maximum precision
+
+			console.log("new " + storage.knockouts[k]);
 
 			if(storage.knockouts[k] < abs_min)//enforce absolute minimum total KO value
 				storage.knockouts[k] = 0;       //otherwise it divides infinitely toward 0
