@@ -609,10 +609,10 @@ tr.record:last-of-type
 	display: inline-block;
 	box-shadow: 0 1px 2px black;
 	text-align: left;
-	font-size: 0.8em;
-	margin: 1px 0 0 -1px;
+	font-size: 0.85em;
+	margin: 0;
 	padding: 0 0 0 2px;
-	width: 35px;
+	width: 37px;
 	-moz-appearance:textfield;
 }
 
@@ -858,13 +858,14 @@ tr.record:last-of-type
 
 .trackerArrow
 {
-	margin: 5px 0 0;
+	margin: 5px 9px 0;
 	display: inline-block;
+	transform: scale(1.1);
 }
 
 .trackerArrow:last-of-type
 {
-	margin: 4px 0 0 7px;
+	margin: 4px 0 0 16px;
 }
 
 .underline

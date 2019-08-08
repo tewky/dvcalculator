@@ -602,8 +602,8 @@
 				<div class='column'>
 					<h4 id='ZONE_CONTROLS'>
 						<!--<span>Tracker</span>-->
-						<input class='smallButton' type='button' name='basestats' value='Show Base Stats' onclick='baseStats()'/>
-						<input class='smallButton' type='button' name='veteran' value='Veteran Mode' onclick='veteranMode()'/>
+						<input class='smallButton' type='button' name='basestats' value='Show Stats' onclick='baseStats()'/>
+						<input class='smallButton' type='button' name='veteran' value='Veteran' onclick='veteranMode()'/>
 						<script>
 						if(cached)
 						{
@@ -841,18 +841,18 @@
 							{
 								var labels = ['Name', '№', 'Type', 'HP', 'Att', 'Def', 'Spd', 'Spc', 'Tot', 'KO'];
 								var headings = ['name', 'pokedex', 'type', 'hp', 'attack', 'defense', 'speed', 'special', 'total', 'ko'];
-								var labelsToRemove = 6;
+								var labelsToRemove = 7;
 
 								if(storage.gen == 2)
 								{
-									labelsToRemove = 7;
+									labelsToRemove += 1;
 									labels.splice(7, 4, 'Sp.A', 'Sp.D', 'Tot', 'KO');
 									headings.splice(7, 4, 'special_attack', 'special_defense', 'total', 'ko');
 								}
 
 								if(!storage.display.basestats)
 								{
-									labels.splice(3, labelsToRemove);
+									labels.splice(2, labelsToRemove);
 								}
 
 								for(i = 0; i < labels.length; i++)
@@ -913,16 +913,20 @@
 							td = document.createElement('td');
 							var type = row.type.split('-');
 
-							for(i = 0; i < type.length; i++)
+							if(storage.display.basestats)
 							{
-								src = "assets/types/" + type[i].toLowerCase() + ".png";
-								var typeImg = document.createElement('img');
-								typeImg.setAttribute('class', 'types');
-								typeImg.setAttribute('src', src);
-								td.appendChild(typeImg);
+								for(i = 0; i < type.length; i++)
+								{
+									src = "assets/types/" + type[i].toLowerCase() + ".png";
+									var typeImg = document.createElement('img');
+									typeImg.setAttribute('class', 'types');
+									typeImg.setAttribute('src', src);
+									td.appendChild(typeImg);
+								}
+
+								tr.appendChild(td);
 							}
 
-							tr.appendChild(td);
 							var headings = ['hp', 'attack', 'defense', 'speed', 'special', 'total'];
 
 							if(storage.gen == 2)
