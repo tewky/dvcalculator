@@ -273,9 +273,8 @@ tr.record:last-of-type
 
 #GUIDE_CONTAINER 
 {
-	width: 70%;
+	width: 80%;
 	text-align: left;
-
 	margin: 10px auto;
 }
 
@@ -292,7 +291,7 @@ tr.record:last-of-type
 
 #GUIDE_CONTAINER ol
 {
-	width: 85%;
+	width: 90%;
 	margin: 5px auto 10px;
 }
 
@@ -300,6 +299,32 @@ tr.record:last-of-type
 {
 	text-indent: -30px;
 	margin: 0 0 10px 20px;
+}
+
+@media only screen and (max-width: 600px) 
+{
+	#GUIDE_CONTAINER
+	{
+		width: 100%;
+	}
+	
+	#GUIDE_CONTAINER ol
+	{
+		width: 100%;
+	}
+}
+
+@media only screen and (min-width: 1000px) 
+{
+	#GUIDE_CONTAINER
+	{
+		width: 70%;
+	}
+	
+	#GUIDE_CONTAINER ol
+	{
+		width: 85%;
+	}
 }
 
 #HEADER
