@@ -283,9 +283,14 @@ tr.record:last-of-type
 	text-align: left;
 }
 
+#GUIDE_CONTAINER h3
+{
+	margin: 0 0 20px;
+}
+
 #GUIDE_CONTAINER span.bold
 {
-	margin: 12px 0;
+	margin: 20px 0 10px;
 	display: inline-block;
 }
 
@@ -679,6 +684,12 @@ tr.record:last-of-type
 	text-align: left;
 }
 
+/* target the cell holding the KO input and set min width to prevent awkward collapse on small screens */
+#TRACKER tr td:last-of-type
+{
+	min-width: 103px;
+}
+
 #VITAMIN_LABELS
 {
 	margin: 4px 0 0;
@@ -700,8 +711,8 @@ tr.record:last-of-type
 
 #VETERAN input
 {
-	width: 50px;
-	margin: 0 2%;
+	width: 40px;
+	margin: 0 1%;
 }
 
 #BLUE
