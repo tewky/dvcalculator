@@ -6,8 +6,8 @@
 		<meta name="description" content="Pokemon DV Calculator"/>
 		<meta name="viewport" content="width=device-width, initial-scale=1"/>
 		<link href="assets/style.css" rel="stylesheet" type="text/css"/>
-		<!-- Fetch API doesn't work for local JSON files. Browsers prevent this for security, so data is duplicated
-		in these JS files and loaded statically. -->
+		<!-- The Fetch API doesn't work for local JSON files (browser security reasons) and this app was designed for offline use.
+			 Data is duplicated in these JS files and loaded statically. -->
 		<script src="assets/data/kanto_data.js" type="text/javascript"></script>
 		<script src="assets/data/johto_data.js" type="text/javascript"></script>
 		<script src="dvcalculator.js" type="text/javascript"></script>
@@ -601,7 +601,6 @@
 				</div>
 				<div class='column'>
 					<h4 id='ZONE_CONTROLS'>
-						<!--<span>Tracker</span>-->
 						<input class='smallButton' type='button' name='basestats' value='Show Stats' onclick='baseStats()'/>
 						<input class='smallButton' type='button' name='veteran' value='Veteran' onclick='veteranMode()'/>
 						<script>

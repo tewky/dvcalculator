@@ -1268,11 +1268,7 @@ function update()
 							if(!even(storage.mode[i]))
 							{
 								var div = Math.pow(2, i - 1);
-								console.log("hp div" + div);
-								console.log("storage.mode[i]) " + storage.mode[i]);
-								console.log("hp weight "+ (0.5 / div) );
-								hp *= 2 * (1 - 0.5 / div) * 0.5;//weight * probability of odd
-								
+								hp *= 2 * (1 - 0.5 / div) * 0.5;//arbitrary scale * weight * probability of odd
 							}
 						}
 					}
@@ -1606,6 +1602,8 @@ function getZoneCaptions()
 }
 
 // Load JSON file @path
+/* This previously used the Fetch API however this app was intended for offline use as well, and browsers prevent local use of Fetch,
+   so data is loaded statically through imported Javacsript files. */
 async function loadTable(path, title, index)
 {
 	return JSON.stringify(JSON.parse(data)[index]);;
