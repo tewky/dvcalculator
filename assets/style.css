@@ -319,12 +319,12 @@ tr.record:last-of-type
 	#GUIDE_CONTAINER
 	{
 		width: 70%;
+		padding: 0 0 0 10px;
 	}
 	
 	#GUIDE_CONTAINER ol
 	{
 		width: 85%;
-		padding: 0 0 0 10px;
 	}
 }
 
