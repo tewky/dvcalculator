@@ -1,10 +1,8 @@
 **********************
 
-2019-08-06
+2019-08-08
 
 DV Calculator by tewky
-
-Bug fix: experience tracker has been modified to work properly with manual KO entry on mobile phones. On some devices the spinner would not be displayed and manual entry of the KOs would not be properly distributed between pokemon sharing experience.
 
 Supports Firefox and Chrome, including mobile devices.
 
