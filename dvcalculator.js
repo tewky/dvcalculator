@@ -66,7 +66,7 @@ function changeKO(id, dir)
 			entry. value = 0;
 
 		storage.buttonEntry[id - 1] = true;
-		entry.style.backgroundColor = '#b9ff94';
+		entry.style.backgroundColor = '#ff8fa0';
 	}
 }
 
