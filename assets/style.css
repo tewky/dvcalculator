@@ -90,7 +90,7 @@ hr
 
 img.types
 {
-	margin: 1px 3px 0;
+	margin: 1px 2px 0;
 }
 
 input
@@ -273,7 +273,7 @@ tr.record:last-of-type
 
 #GUIDE_CONTAINER 
 {
-	width: 80%;
+	width: 75%;
 	text-align: left;
 	margin: 10px auto;
 }
@@ -465,7 +465,7 @@ tr.record:last-of-type
 
 #ZONE_CONTROLS input[type='button']
 {
-		margin: 9px 2px 0;
+	margin: 9px 2px 0;
 }
 
 #SELECT img
@@ -476,7 +476,6 @@ tr.record:last-of-type
 #SELECT span
 {
 	float: left;
-	display: inline-block;
 }
 
 #SHINY
@@ -638,13 +637,6 @@ tr.record:last-of-type
 	transform: translateY(-50%);
 }
 
-#TRACKER img
-{
-	position: relative;
-	top: -5px;
-	left: -4px;
-}
-
 #TRACKER img.types
 {
 	float: left;
@@ -682,6 +674,13 @@ tr.record:last-of-type
 {
 	padding: 4px 4px 4px 7px;
 	text-align: left;
+}
+
+#TRACKER tr td:first-child img
+{
+	position: relative;
+	top: -4px;
+	left: -2px;
 }
 
 /* target the cell holding the KO input and set min width to prevent awkward collapse on small screens */
@@ -926,14 +925,14 @@ tr.record:last-of-type
 
 .trackerArrow
 {
-	margin: 5px 9px 0;
+	margin: 0 9px 0;
 	display: inline-block;
 	transform: scale(1.1);
 }
 
 .trackerArrow:last-of-type
 {
-	margin: 4px 0 0 16px;
+	margin: -1px 0 0 10px;
 }
 
 .underline

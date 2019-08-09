@@ -55,34 +55,49 @@ function devolvePokemon()
 }
 
 // Increase the knockout count of a pokemon
-function increaseKO(id)
+function changeKO(id, dir)
 {
 	if(storage.manualEntry[id - 1] == false)
 	{
 		var entry = $('k' + id);
-		entry.value = parseFloat(entry.value) + parseFloat(storage.kostep);
-	}
-}
+		entry.value = parseFloat(entry.value) + dir * parseFloat(storage.kostep);
 
-// Decrease the knockout count of a pokemon
-function decreaseKO(id)
-{
-	if(storage.manualEntry[id - 1] == false)
-	{
-		var entry = $('k' + id);
-		entry.value = parseFloat(entry.value) - parseFloat(storage.kostep);
+		if(entry.value < 0)//field validation 
+			entry. value = 0;
+
+		storage.buttonEntry[id - 1] = true;
+		entry.style.backgroundColor = '#b9ff94';
 	}
 }
 
 // Set manual entry mode for a KO input field
 function setManual(id) 
 {
-	var i = id - 1;
-	storage.manualEntry[i] = true;//id is index in the pokedex	
 	var entry = $('k' + id);
-	storage.previousKO[i] = parseFloat(entry.value);
-	entry.value = 0;
-	entry.style.backgroundColor = '#ff8fa0';
+
+	if(storage.buttonEntry[id - 1] == false)
+	{
+		var i = id - 1;
+		storage.manualEntry[i] = true;	
+		storage.previousKO[i] = parseFloat(entry.value);
+		entry.value = 0;
+		entry.style.backgroundColor = '#ff8fa0';
+	}
+	else
+	{
+		entry.blur();// prevent manual entry after buttons have been used to change value - the two methods cannot be used simultaneously
+	}
+}
+
+function untrack(event)
+{
+	id = this.alt;
+	
+	if(isset(storage.savedpokemon[id]))
+	{
+		storage.savedpokemon[id].track = false;
+		saveAll();
+	}
 }
 
 // Set the experience tracker column by which to sort its entries.
@@ -256,29 +271,9 @@ function getFormInput()
 function saveAll()
 {
 	getFormInput();
-	//updateManualKO();
 	storage.save = true;
 	refresh();
 }
-
-// Update the KO input fields with manual data
-/*function updateManualKO()
-{
-	console.log(" s " + storage.manualEntry.length);
-	for(var i = 0; i < storage.manualEntry.length; i++)
-	{
-		if(storage.manualEntry[i] == true)
-		{
-			console.log("add " + $('k' + i).value);
-			console.log("prev " + storage.previousKO[i]);
-			$('k' + i).value = storage.previousKO[i] + parseFloat($('k' + i).value);
-			console.log("new " + $('k' + i).value);
-		} else {
-			console.log("fu");
-		}
-	}
-	alert("t");
-}*/
 
 // Change current Pokemon to that selected in the form.
 function changePokemon()
@@ -519,6 +514,7 @@ function clear()
 
 	storage.knockouts = createArray(storage.global.numpokemon, 0);
 	storage.manualEntry = createArray(storage.global.numpokemon, false);
+	storage.buttonEntry = createArray(storage.global.numpokemon, false);
 	storage.previousKO = createArray(storage.global.numpokemon, 0);
 	storage.accuracy = createArray(storage.global.numstats, 0);
 	storage.display = new Object();
@@ -817,6 +813,9 @@ function update()
 
 	id = storage.current_pokemon[0];//reuse of temp variable
 
+
+	//reset button entry flags
+	storage.buttonEntry = createArray(storage.global.numpokemon, false);
 	//update stat experience based on all rows displayed in tracker
 	for(k = 0; k < storage.global.numpokemon; k++)
 	{
@@ -836,7 +835,6 @@ function update()
 
 			if(storage.manualEntry[k] == true) //indexed by pokedex
 			{
-
 				//manual entry was performed so divide exp. here instead of button callbacks
 				delta /= storage.trackcount;
 
@@ -844,11 +842,6 @@ function update()
 				{
 					delta = Math.sign(delta) * min; //enforce minimum step size
 				}
-
-				//console.log("add " + knockouts);
-				console.log("prev " + storage.previousKO[k]);
-				//delta = knockouts - storage.knockouts[k];
-				console.log("delta " + delta);
 
 				storage.manualEntry[k] = false;
 				storage.previousKO[k] = 0;
@@ -861,8 +854,6 @@ function update()
 				delta = 0;
 			else
 				storage.knockouts[k] += delta;// Add delta to knockouts, no rounding for maximum precision
-
-			console.log("new " + storage.knockouts[k]);
 
 			if(storage.knockouts[k] < abs_min)//enforce absolute minimum total KO value
 				storage.knockouts[k] = 0;       //otherwise it divides infinitely toward 0
@@ -1171,7 +1162,7 @@ function update()
 						else if(storage.accuracy[i] == 1 || storage.accuracy[i] == 0)
 							reverse = i;
 					}
-					if(count == 3)
+					if(count == 3 || (storage.gen == 2 && count == 4))
 					{
 						if(storage.mode[1] % 2 == 1 && reverse != 1)
 							hp -= 8;
@@ -1271,6 +1262,7 @@ function update()
 
 				if(storage.gen == 2)
 				{
+					//set value and accuracy of other special stat when one is known
 					if(storage.accuracy[4] == 2) {
 						storage.mode[5] = storage.mode[4];
 						storage.accuracy[5] = 2;

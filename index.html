@@ -800,6 +800,8 @@
 										div.setAttribute('id', id);
 										var img = document.createElement('img');
 										img.setAttribute('src', src);
+										//img.setAttribute('alt', id);
+										//img.addEventListener('click', untrack);
 
 										if(i == 0)
 											img.setAttribute('class', 'framed');
@@ -954,19 +956,19 @@
 							input.setAttribute('id', 'k' + id);
 							input.setAttribute('value', ko);
 							input.setAttribute('type', 'number');
-							input.setAttribute('step', parseFloat(storage.display.kostep));
+							input.setAttribute('step', 'any');
 							input.setAttribute('max', '999.0');
 							input.setAttribute('min', '0.0');
 							input.setAttribute('onfocus', 'setManual(' + id + ')');
 							arrow.setAttribute('src', 'assets/down_arrow.png');
 							arrow.setAttribute('class', 'trackerArrow');
-							arrow.setAttribute('onclick', 'decreaseKO(' + id  + ')');
+							arrow.setAttribute('onclick', 'changeKO(' + id  + ', -1)');
 							div.appendChild(arrow);
 							div.appendChild(input);
 							arrow = document.createElement('img');
 							arrow.setAttribute('src', 'assets/up_arrow.png');
 							arrow.setAttribute('class', 'trackerArrow');
-							arrow.setAttribute('onclick', 'increaseKO(' + id  + ')');
+							arrow.setAttribute('onclick', 'changeKO(' + id  + ', 1)');
 							div.appendChild(arrow);
 							td.appendChild(div);
 							tr.appendChild(td);
@@ -1011,7 +1013,7 @@
 						<li>	Battle with the Pokemon. After each knockout it participates in, track the KO in the experience tracker. If you
 								have to swap the Pokemon out of battle, first check the “Share” option, then switch to a different Pokemon
 								in the calculator to track the KO. Stat experience is split evenly between Pokemon in the battle. Either
-								use the arrow buttons to track the KO or enter them manually in whole numbers - the calculator will do the distribution for you.</li>
+								use the arrow buttons to track the KO (one press represents one KO) or enter them manually in whole numbers - the calculator will do the distribution for you.</li>
 						<li>	After the Pokemon levels up, enter its new stats and press calculate.
 								Repeat this process until the DV row shows the accuracy you want. The other stats shown are only as accurate as the DVs and should
 								be considered estimates until the whole DV row shows red. Errors made while entering stats or tracking knockouts will affect the accuracy of these results.
@@ -1040,7 +1042,7 @@
 					<ul> 
 						<li>Manual entry of KOs in the tracker now properly splits stat exp. between Pokemon sharing it. This feature was changed to use the number input spinner
 						instead, but some devices like mobile phones do not support the spinners, so the XP sharing feature would not work correctly - the XP would not be divided before its distribution
-						between the Pokemon, leading to inaccuracies in the stat XP calculation. I apologize for this error caused by lack of testing on mobile devices. This application was designed for desktop
+						between the Pokemon, leading to an underestimate of your Pokemon's DVs. I apologize for this error caused by lack of testing on mobile devices. This application was designed for desktop
 						and I have been hacking in mobile device support as I go.</li>
 						<li>The rarity stat calculation was updated to factor in HP and increase precision. A Pokemon that was previously 1 / 65536 rarity would now be 1 / 147509.</li>
 						<li>Fixed a bug in the rarity calculation that would cause Pokemon in gen 2 to have a much higher rarity than intended. The relative rarity between gen 2 Pokemon was still valid 
