@@ -953,9 +953,8 @@ function update()
 			else
 			{
 				/* because of the low precision of minimum step size for stat experience
-				*  when using the vitamin trick the calculator runs in 'estimation' mode,
-				*  where the results are considered to be only 50% accurate
-				*/
+				   when using the vitamin trick the calculator runs in 'estimation' mode,
+				   where the results are considered to be only 50% accurate */
 				storage.estimation = true;
 				storage.stat_exp = createArray(storage.global.numstats, 0);
 
@@ -1292,8 +1291,8 @@ function update()
 					}
 
 					if(!storage.display.hiddenpower)//if display hidden power already set don't calculate again
-					{																//in cases where clear() was called for a saved pokemon not all
-						calculateHiddenPower();       //required values for calculation will be initialized
+					{								//in cases where clear() was called for a saved pokemon not all
+						calculateHiddenPower();     //required values for calculation will be initialized
 						storage.display.hiddenpower = true;
 					}
 				}
