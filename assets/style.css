@@ -311,7 +311,7 @@ tr.record:last-of-type
 	#GUIDE_CONTAINER
 	{
 		width: 90%;
-		padding: 0 0 0 10px;
+		padding: 0 5px 0 10px;
 	}
 	
 	#GUIDE_CONTAINER ol
