@@ -27,6 +27,12 @@ function createArray(size, initial)
 	return array;
 }
 
+function clearStat(stat)
+{
+	if($('STAT_' + stat).value == 0)
+		$('STAT_' + stat).value = '';
+}
+
 // Determine whether a number is odd or even
 function even(num) 
 {
@@ -625,6 +631,20 @@ function pollInput()
 	storage.current_pokemon = [id, species, storage.attributes.pokedex - 1];
 	storage.overwrite = storage.input.overwrite;
 
+	// Catch and reset empty values caused by onfocus action in stat input row
+	var keys = ['lvl', 'hp', 'att', 'def', 'spd', 'spc'];
+
+	if(storage.gen == 2)
+		keys.splice(5, 2, 'spca', 'spcd');
+
+	var i = 1;
+
+	for(var k in keys)
+	{
+		if(storage.input[keys[k]] == '')
+			storage.input[keys[k]] = 0;
+	}
+
 	//Update stats
 	if(isset(storage.input.lvl))
 		storage.stats.lvl = storage.input.lvl;
@@ -655,7 +675,7 @@ function pollInput()
 			storage.stats.spcd = storage.input.spcd;
 	}
 
-	//Update vitamins
+	// Update vitamins
 	if(isset(storage.input.vithp))
 		storage.vitamins[0] = storage.input.vithp;
 

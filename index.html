@@ -194,8 +194,10 @@
 									input.setAttribute('type', 'number');
 									input.setAttribute('min', '0');
 									input.setAttribute('max', '999');
+									input.setAttribute('id', 'STAT_' + i);
 									input.setAttribute('name', keys[i]);
 									input.setAttribute('value', storage.stats[keys[i]]);
+									input.setAttribute('onclick', 'clearStat(' + i + ')');
 									td.appendChild(input);
 									$('STAT_INPUT').appendChild(td);
 								}
