@@ -275,7 +275,7 @@ tr.record:last-of-type
 {
 	width: 80%;
 	text-align: left;
-	margin: 10px auto;
+	margin: 25px auto 0;
 }
 
 #GUIDE_CONTAINER * 
@@ -311,12 +311,12 @@ tr.record:last-of-type
 	#GUIDE_CONTAINER
 	{
 		width: 90%;
-		padding: 0 5px 0 10px;
+		padding: 0 0 0 10px;
 	}
 	
 	#GUIDE_CONTAINER ol
 	{
-		width: 100%;
+		width: 95%;
 	}
 }
 
@@ -483,7 +483,7 @@ tr.record:last-of-type
 	margin: 4px 0 0 !important;
 }
 
-/*reset prompt*/
+/* reset prompt */
 #PROMPT
 {
 	display: inline-block;
