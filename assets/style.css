@@ -717,7 +717,7 @@ tr.record:last-of-type
 #BLUE
 {
 	background-image: url("blue.png");
-	opacity: 25%;
+	/* opacity: 25%; */
 }
 
 #YELLOW
