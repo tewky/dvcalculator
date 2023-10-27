@@ -1,19 +1,17 @@
 **********************
 
-2020-07-29
+2023-10-27
 
-DV Calculator by tewky
-
-Supports Firefox and Chrome, including mobile devices.
+Updated with new rarity calculation.
 
 Thanks for using the DV Calculator!
 
 **********************
 
 
-Title: DV Calculator
+Title: Pokemon DV Calculator
 Description: A web browser application for calculating diversification values in generation 1 and 2 Pokemon games.
-Copyright (C) 2020 tewky @ github.com
+Copyright (C) 2023 tewky@github
 
 This program is free software: you can redistribute it and/or modify
 it under the terms of the GNU General Public License as published by
