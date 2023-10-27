@@ -1299,13 +1299,12 @@ function update()
 
 				calculateHiddenPower();
 
-				// calculate pokemon's rarity, which is the probability of finding same DVs or better in any random wild pokemon
-				// updated to use a percentile method as per AndyJ01's suggestions
+				//calculate pokemon's rarity, which is roughly the probability of finding same DVs or better in any random wild pokemon
+				//updated to use a statistical method to improve rarity stat
 				if(getLength(storage.records) > 0)
 				{
 					/* var rarity = 1;
 					var hp = 1;
-
 					//runs once for each stat (4)
 					for(i = 1; i < getLength(storage.mode); i++)
 					{
@@ -1320,24 +1319,19 @@ function update()
 							}
 						}
 					}
-					
 					hp = (1 / hp) - 1;//arbitrary translation
 					hp = Math.max(1, hp); */
-
-					// runs once for each stat (4)
-					console.log(storage.mode);
-					console.log("hp " + hp);
 					var dvTotal = hp;
 					for(i = 1; i < getLength(storage.mode); i++)
 					{
 						if(!(storage.gen == 2 && i == 5))
 							dvTotal += storage.mode[i]
 					}
-					// original percentiles  [100.0, 99.99, 99.96, 99.81, 99.41, 98.53, 96.81, 93.87, 89.31, 82.88, 74.64, 64.76, 53.83, 42.6, 31.9, 22.49, 14.78, 9.0, 5.01, 2.5, 1.11, 0.42, 0.12, 0.02, 0.0]
-					const percentiles = [99.99, 99.99, 99.96, 99.81, 99.41, 98.53, 96.81, 93.87, 89.31, 82.88, 74.64, 64.76, 53.83, 42.6, 31.9, 22.49, 14.78, 9.0, 5.01, 2.5, 1.11, 0.42, 0.12, 0.10, 0.10];
-					console.log(dvTotal);
-					console.log(dvTotal / 3);
-					storage.rarity = (percentiles[Math.max(Math.min(Math.ceil(dvTotal / 3), 24) - 1, 0)]).toFixed(1); // 3 is group size used in calc, 25 is group count, minus 1 for arbitrary shift to more "intuitive" rarity value
+					const step = 1;
+					const bucketCount = Math.floor(75 / step);
+					const clamp = 4; //exclude this many from each end of rarity array
+					const rarities = [100.0, 100.0, 100.0, 100.0, 99.99, 99.98, 99.96, 99.92, 99.88, 99.81, 99.71, 99.58, 99.41, 99.19, 98.9, 98.53, 98.07, 97.5, 96.81, 95.98, 95.0, 93.85, 92.52, 91.0, 89.28, 87.35, 85.22, 82.87, 80.3, 77.52, 74.57, 71.43, 68.12, 64.68, 61.11, 57.46, 53.74, 49.99, 46.25, 42.55, 38.9, 35.32, 31.88, 28.57, 25.43, 22.47, 19.71, 17.14, 14.79, 12.66, 10.72, 9.0, 7.48, 6.16, 5.01, 4.03, 3.2, 2.51, 1.94, 1.48, 1.11, 0.82, 0.59, 0.42, 0.29, 0.19, 0.12, 0.08, 0.04, 0.02, 0.01, 0.01, 0.0, 0.0, 0.0];
+					storage.rarity = (rarities[Math.max(Math.min(Math.ceil(dvTotal / step), bucketCount - 1 - clamp), clamp)]).toFixed(2);
 					storage.display.rare = true;
 				}
 
