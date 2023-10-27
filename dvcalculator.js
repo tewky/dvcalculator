@@ -1300,10 +1300,11 @@ function update()
 
 				calculateHiddenPower();
 
-				//calculate pokemon's rarity, which is the probability of finding same DVs or better in any random wild pokemon
+				// calculate pokemon's rarity, which is the probability of finding same DVs or better in any random wild pokemon
+				// updated to use a percentile method as per AndyJ01's suggestions
 				if(getLength(storage.records) > 0)
 				{
-					var rarity = 1;
+					/* var rarity = 1;
 					var hp = 1;
 
 					//runs once for each stat (4)
@@ -1322,8 +1323,22 @@ function update()
 					}
 					
 					hp = (1 / hp) - 1;//arbitrary translation
-					hp = Math.max(1, hp);
-					storage.rarity = Math.ceil(1.0 / rarity  * hp);
+					hp = Math.max(1, hp); */
+
+					// runs once for each stat (4)
+					console.log(storage.mode);
+					console.log("hp " + hp);
+					var dvTotal = hp;
+					for(i = 1; i < getLength(storage.mode); i++)
+					{
+						if(!(storage.gen == 2 && i == 5))
+							dvTotal += storage.mode[i]
+					}
+					// original percentiles  [100.0, 99.99, 99.96, 99.81, 99.41, 98.53, 96.81, 93.87, 89.31, 82.88, 74.64, 64.76, 53.83, 42.6, 31.9, 22.49, 14.78, 9.0, 5.01, 2.5, 1.11, 0.42, 0.12, 0.02, 0.0]
+					const percentiles = [99.99, 99.99, 99.96, 99.81, 99.41, 98.53, 96.81, 93.87, 89.31, 82.88, 74.64, 64.76, 53.83, 42.6, 31.9, 22.49, 14.78, 9.0, 5.01, 2.5, 1.11, 0.42, 0.12, 0.10, 0.10];
+					console.log(dvTotal);
+					console.log(dvTotal / 3);
+					storage.rarity = (percentiles[Math.max(Math.min(Math.ceil(dvTotal / 3), 24) - 1, 0)]).toFixed(1); // 3 is group size used in calc, 25 is group count, minus 1 for arbitrary shift to more "intuitive" rarity value
 					storage.display.rare = true;
 				}
 

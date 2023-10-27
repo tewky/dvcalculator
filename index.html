@@ -14,20 +14,16 @@
 	</head>
 	<body>
 		<script>
-		var cached = localStorage.getItem('tablesCached');
-		var storage = JSON.parse(localStorage.getItem('storage'));
-		var tables = JSON.parse(localStorage.getItem('tables'));
-
-		if(cached == null)
-		{
-			localStorage.setItem('tablesCached', 'false');
-			cached = false;
-		}
+			var cached = localStorage.getItem('tablesCached');
+			var storage = JSON.parse(localStorage.getItem('storage'));
+			var tables = JSON.parse(localStorage.getItem('tables'));
+			if(cached == null)
+			{
+				localStorage.setItem('tablesCached', 'false');
+				cached = false;
+			}
 		</script>
-		
 		<div id="CONTAINER">
-				<div style='width: 80%; margin: 10px auto; font-size: 0.8em;'>Updates / Bug fixes: see end of page</div>
-				<span>7/29/2020 HI GAGE</span>
 			<form id="FORM" method="POST">
 				<div id="HEADER">
 					<!--if user presses enter on page focus this blocks an unwanted submit action-->
@@ -439,7 +435,7 @@
 								$("RARE").appendChild(td);
 								td = document.createElement('td');
 								td.setAttribute('colspan', storage.global.numstats);
-								text = document.createTextNode("1 / " + String(storage.rarity));
+								text = document.createTextNode(String(storage.rarity) + "%");
 								td.appendChild(text);
 								$("RARE").appendChild(td);
 							}
@@ -512,6 +508,7 @@
 							tr.appendChild(td);
 							td = document.createElement('td');
 							td.setAttribute('colspan', storage.global.numstats);
+							td.setAttribute('class', 'index');
 							text = document.createTextNode('Records');
 							td.appendChild(text);
 							tr.appendChild(td);
@@ -551,12 +548,17 @@
 						<script>
 							if(storage.showtable)
 							{
-								var headings = ['DV', 'HP', 'Att', 'Def', 'Spd'];
+								var headings = ['-', 'HP', 'Att', 'Def', 'Spd'];
 								var tr = document.createElement('tr');
 								var td = document.createElement('td');
 								td = document.createElement('td');
 								td.setAttribute('class', 'index');
-								td.setAttribute('colspan', 7);
+								text = document.createTextNode('DV');
+								td.appendChild(text);
+								tr.appendChild(td);
+								td = document.createElement('td');
+								td.setAttribute('class', 'index');
+								td.setAttribute('colspan', 6);
 								text = document.createTextNode('Lookup table');
 								td.appendChild(text);
 								tr.appendChild(td);
@@ -582,7 +584,7 @@
 								{
 									tr = document.createElement('tr');
 									td = document.createElement('td');
-									td.setAttribute('class', 'index');
+									td.setAttribute('class', 'statText bold');
 									text = document.createTextNode(String(i));
 									td.appendChild(text);
 									tr.appendChild(td);
@@ -590,6 +592,7 @@
 									for(j = 0; j < storage.global.numstats; j++)
 									{
 										td = document.createElement('td');
+										td.setAttribute('class', 'statText');
 										text = document.createTextNode(storage.lookup[i][j]);
 										td.appendChild(text);
 										tr.appendChild(td);
@@ -903,6 +906,7 @@
 							var index = row.pokedex;
 
 							td = document.createElement('td');
+							td.setAttribute('class', 'statText');
 							text = document.createTextNode(index);
 							td.appendChild(text);
 
@@ -943,6 +947,7 @@
 								for(i = 0; i < headings.length; i++)
 								{
 									td = document.createElement('td');
+									td.setAttribute('class', 'statText');
 									text = document.createTextNode(row[headings[i]]);
 									td.appendChild(text);
 									tr.appendChild(td);
@@ -986,8 +991,21 @@
 			<div id='GUIDE_CONTAINER'>
 				<h3>User Guide</h3><br/>
 				Pokemon DV Calculator<br/>
-				Created by tewky<br/>
-				Updated 2020-07-29<br/>
+				Created by tewky @ github<br/>
+				Updated 2023-10-27<br/>
+				<br/>
+				<h5>License</h5>
+				<p>
+					This program is free software: you can redistribute it and/or modify
+					it under the terms of the GNU General Public License as published by
+					the Free Software Foundation, either version 3 of the License, or
+					(at your option) any later version.<br/>
+					<br/>
+					This program is distributed in the hope that it will be useful,
+					but WITHOUT ANY WARRANTY; without even the implied warranty of
+					MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+					GNU General Public License for more details.
+				</p>
 				<p>
 					<span class='bold'>What is the DV Calculator?</span><br/>
 					It helps you find the hidden attributes of a Pokemon. These are called diversification values and determine the
@@ -1043,13 +1061,9 @@
 				<p>
 					<span class='bold'>Updates</span><br/>
 					<ul> 
-						<li>Manual entry of KOs in the tracker now properly splits stat exp. between Pokemon sharing it. This feature was changed to use the number input spinner
-						instead, but some devices like mobile phones do not support the spinners, so the XP sharing feature would not work correctly - the XP would not be divided before its distribution
-						between the Pokemon, leading to an underestimate of your Pokemon's DVs. I apologize for this error caused by lack of testing on mobile devices. This application was designed for desktop
-						and I have been hacking in mobile device support as I go.</li>
-						<li>The rarity stat calculation was updated to factor in HP and increase precision. A Pokemon that was previously 1 / 65536 rarity would now be 1 / 147509.</li>
-						<li>Fixed a bug in the rarity calculation that would cause Pokemon in gen 2 to have a much higher rarity than intended. The relative rarity between gen 2 Pokemon was still valid 
-							but the actual number given was many times higher than it should have been.	</li>
+						<li>Missing Pokemon were added to experience tracker (Growlithe in Route 9, Ninetales in Cinnabar Island)</li>
+						<li>The rarity stat calculation was updated to a new percentile method</li>
+						<li>Some minor style updates, removed spinner from stat entry</li>
 					</ul>
 				</p>
 				<p>
@@ -1063,7 +1077,6 @@
 					AndyJ01 @ Github<br/>
 				</p><br/>
 				<p class = 'italic'>
-					Questions or comments? anoble@protonmail.com
 				</p>
 			</div>
 		</div>
