@@ -1327,11 +1327,11 @@ function update()
 						if(!(storage.gen == 2 && i == 5))
 							dvTotal += storage.mode[i]
 					}
-					const step = 1;
-					const bucketCount = Math.floor(75 / step);
-					const clamp = 4; //exclude this many from each end of rarity array
-					const rarities = [100.0, 100.0, 100.0, 100.0, 99.99, 99.98, 99.96, 99.92, 99.88, 99.81, 99.71, 99.58, 99.41, 99.19, 98.9, 98.53, 98.07, 97.5, 96.81, 95.98, 95.0, 93.85, 92.52, 91.0, 89.28, 87.35, 85.22, 82.87, 80.3, 77.52, 74.57, 71.43, 68.12, 64.68, 61.11, 57.46, 53.74, 49.99, 46.25, 42.55, 38.9, 35.32, 31.88, 28.57, 25.43, 22.47, 19.71, 17.14, 14.79, 12.66, 10.72, 9.0, 7.48, 6.16, 5.01, 4.03, 3.2, 2.51, 1.94, 1.48, 1.11, 0.82, 0.59, 0.42, 0.29, 0.19, 0.12, 0.08, 0.04, 0.02, 0.01, 0.01, 0.0, 0.0, 0.0];
-					storage.rarity = (rarities[Math.max(Math.min(Math.ceil(dvTotal / step), bucketCount - 1 - clamp), clamp)]).toFixed(2);
+					const step = 3;
+					const bucketCount = Math.ceil(75 / step);
+					const clamp = 3; //exclude this many from each end of rarity array (100% and 0% results)
+					const rarities = [100.0, 100.0, 99.96, 99.79, 99.38, 98.44, 96.78, 93.88, 89.32, 82.87, 74.57, 64.7, 53.79, 42.49, 31.92, 22.46, 14.8, 9.11, 5.04, 2.54, 1.16, 0.42, 0.14, 0.02, 0.0];
+					storage.rarity = (Math.ceil(rarities[Math.max(Math.min(Math.ceil(dvTotal / step), bucketCount - 1 - clamp), clamp)])).toFixed(0);
 					storage.display.rare = true;
 				}
 
