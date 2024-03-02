@@ -1695,4 +1695,13 @@ async function cacheTables(gen)
 	localStorage.setItem('tables', JSON.stringify(tables));
 	tables = JSON.parse(localStorage.getItem('tables'));
 }
+
+function scrollToTop() {
+	window.scrollTo({top: 0, behavior: 'smooth'});
+}
+
+window.onscroll = function() {
+document.getElementById("topBtn").style.display =
+	document.body.scrollTop > 20 || document.documentElement.scrollTop > 20 ? "block" : "none";
+};
 //EOF
