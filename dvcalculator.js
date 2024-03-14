@@ -1295,24 +1295,8 @@ function update()
 				//updated to use a statistical method to improve rarity stat
 				if(getLength(storage.records) > 0)
 				{
-					/* var rarity = 1;
-					var hp = 1;
-					//runs once for each stat (4)
-					for(i = 1; i < getLength(storage.mode); i++)
-					{
-						if(!(storage.gen == 2 && i == 5))
-						{
-							rarity *= (16.0 - parseFloat(storage.mode[i])) / 16.0;
-							//50% chance is odd, weighted by contribution to total
-							if(!even(storage.mode[i]))
-							{
-								var div = Math.pow(2, i - 1);
-								hp *= 2 * (1 - 0.5 / div) * 0.5;//arbitrary scale * weight * probability of odd
-							}
-						}
-					}
-					hp = (1 / hp) - 1;//arbitrary translation
-					hp = Math.max(1, hp); */
+					// Bug fix, HP was undefined
+					hp = storage.mode[0];
 					var dvTotal = hp;
 					for(i = 1; i < getLength(storage.mode); i++)
 					{
@@ -1701,7 +1685,7 @@ function scrollToTop() {
 }
 
 window.onscroll = function() {
-document.getElementById("topBtn").style.display =
-	document.body.scrollTop > 20 || document.documentElement.scrollTop > 20 ? "block" : "none";
+	document.getElementById("TOP_BUTTON").style.display =
+		document.body.scrollTop > 20 || document.documentElement.scrollTop > 20 ? "block" : "none";
 };
 //EOF
